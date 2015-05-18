@@ -358,7 +358,7 @@ def addMCAnalysisOptions(parser,addTreeToYieldOnesToo=True):
     parser.add_option("--sp", "--signal-process", dest="processesAsSignal", type="string", default=[], action="append", help="Processes to set as signal (overriding the '+' in the text file)");
     parser.add_option("--AP", "--all-processes", dest="allProcesses", action="store_true", help="Include also processes that are marked with SkipMe=True in the MCA.txt")
     parser.add_option("--project", dest="project", type="string", help="Project to a scenario (e.g 14TeV_300fb_scenario2)")
-    parser.add_option("-D", "--dump-events",     dest="dumpEvent", type="string", default =[], help="Dump event variables given as a regex for all cuts into a file <process>_dump.txt.") 
+    parser.add_option("-D", "--dump-events",     dest="dumpEvent", type="string", default =[], help="Dump event variables into a file <process>_dump.txt. Give either a regex or a file containing a regex as argument.") 
 
 if __name__ == "__main__":
     from optparse import OptionParser
