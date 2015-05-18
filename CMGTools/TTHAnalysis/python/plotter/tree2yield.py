@@ -222,6 +222,27 @@ class TreeToYield:
     def getTree(self):
         if not self._isInit: self._init()
         return self._tree
+    def getDump(self,cuts,scanString):
+        if not self._isInit: self._init()
+        ## keep this for now, maybe we want to 
+        ## specify an entry point cut at some point
+        #cutseq = [ ['all', cuts.allCuts()] ]
+        #sequential = True
+        #print 'this is allcuts()', cuts.allCuts()
+        #for cn,cv in cutseq:
+        #    if sequential:
+        #        if cut: cut += " && "
+        #        cut += "(%s)" % cv
+        #    else:
+        #        cut = cv
+        cut = cuts.allCuts()
+        self._tree.SetScanField(-1)
+        save = os.dup( sys.stdout.fileno() )
+        newout = file( self._name+'_dump.out', 'w' )
+        os.dup2( newout.fileno(), sys.stdout.fileno() )
+        self._tree.Scan(scanString,cut,'colsize=6 precision=6');
+        os.dup2( save, sys.stdout.fileno() )
+        newout.close()
     def getYields(self,cuts,noEntryLine=False):
         if not self._isInit: self._init()
         report = []; cut = ""

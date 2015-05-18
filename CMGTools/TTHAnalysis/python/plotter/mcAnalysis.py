@@ -5,6 +5,10 @@ from CMGTools.TTHAnalysis.plotter.projections import *
 import pickle, re
 
 ## These must be defined as standalone functions, to allow runing them in parallel
+def _runDump(args):
+    key,tty,cuts,scanString = args
+    return (key, tty.getDump(cuts,scanString))
+
 def _runYields(args):
     key,tty,cuts,noEntryLine = args
     return (key, tty.getYields(cuts,noEntryLine=noEntryLine))
@@ -170,6 +174,19 @@ class MCAnalysis:
         return self._allData[process][0].setOption(name,value)
     def getScales(self,process):
         return [ tty.getScaleFactor() for tty in self._allData[process] ] 
+    def getDump(self,cuts,scanString,process=None,nodata=False):
+        tasks = []
+        finalString = scanString
+        if os.path.isfile(scanString):
+            finalString = eval(open(scanString,'r').read())
+        for key,ttys in self._allData.iteritems():
+            if key == 'data' and nodata: continue
+            if process != None and key != process: continue
+            for tty in ttys:
+                tasks.append((key,tty,cuts,finalString))
+        ## then do the work
+        retlist = []
+        retlist = map(_runDump, tasks)
     def getYields(self,cuts,process=None,nodata=False,makeSummary=False,noEntryLine=False):
         ## first figure out what we want to do
         tasks = []
@@ -341,6 +358,7 @@ def addMCAnalysisOptions(parser,addTreeToYieldOnesToo=True):
     parser.add_option("--sp", "--signal-process", dest="processesAsSignal", type="string", default=[], action="append", help="Processes to set as signal (overriding the '+' in the text file)");
     parser.add_option("--AP", "--all-processes", dest="allProcesses", action="store_true", help="Include also processes that are marked with SkipMe=True in the MCA.txt")
     parser.add_option("--project", dest="project", type="string", help="Project to a scenario (e.g 14TeV_300fb_scenario2)")
+    parser.add_option("-D", "--dump-events",     dest="dumpEvent", type="string", default =[], help="Dump event variables given as a regex for all cuts into a file <process>_dump.txt.") 
 
 if __name__ == "__main__":
     from optparse import OptionParser
@@ -355,3 +373,5 @@ if __name__ == "__main__":
             cf.add(cut[0],cut[1])
     report = tty.getYields(cf)#, process=options.process)
     tty.prettyPrint(report)
+    if options.dumpEvent:
+        tty.getDump(cf,options.dumpEvent)

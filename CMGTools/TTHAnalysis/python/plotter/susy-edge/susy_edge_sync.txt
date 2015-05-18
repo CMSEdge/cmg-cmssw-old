@@ -18,7 +18,6 @@ isolation of both < 0.15:  LepGood_relIso03[0] < 0.15 && LepGood_relIso03[1] < 0
 ## lep1_pt25: LepGood_pt[0] > 25 
 ## lep2_pt20: LepGood_pt[1] > 20 
 ## lep1 and lep2 pass loose ID (electrons): LepGood_tightId[0] >=1 && LepGood_tightId[1] >= 1
-## # lep1 and lep2 pass loose ID (electrons): LepGood_eleCutIdCSA14_25ns_v1[0] >=1 && LepGood_eleCutIdCSA14_25ns_v1[1] >= 1
 ## exclude 1.4 - 1.6 in |eta|: (abs(LepGood_eta[0]) < 1.4 || abs(LepGood_eta[0]) > 1.6) && (abs(LepGood_eta[1]) < 1.4 || abs(LepGood_eta[1]) > 1.6)
 ## opposite-sign: LepGood_charge[0]*LepGood_charge[1] < 0
 ## separated 0.3 in dR:  l1l2_DR > 0.3
@@ -48,3 +47,12 @@ isolation of both < 0.15:  LepGood_relIso03[0] < 0.15 && LepGood_relIso03[1] < 0
 ## opposite-sign: LepGood_charge[0]*LepGood_charge[1] < 0
 ## separated 0.3 in dR:  l1l2_DR > 0.3
 ## isolation of both < 0.15:  LepGood_relIso03[0] < 0.15 && LepGood_relIso03[1] < 0.15
+#################################################
+##############  JET/MET   #######################
+#################################################
+nJets >= 1:  nJet30 >= 1 && Jet_pt[0] > 35 && abs(Jet_eta[0]) < 2.4
+nJets >= 2:  nJet30 >= 2 && Jet_pt[1] > 35 && abs(Jet_eta[1]) < 2.4
+nJets >= 3:  nJet30 >= 3 && Jet_pt[2] > 35 && abs(Jet_eta[2]) < 2.4
+MET > 50:  met_pt > 50
+MET > 150:  met_pt > 150
+MET > 200:  met_pt > 200
