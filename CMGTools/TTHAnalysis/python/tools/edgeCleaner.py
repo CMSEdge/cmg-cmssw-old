@@ -12,11 +12,9 @@ class edgeCleaner:
                  ("iLT"+label,"I",20,"nLepTight"+label), 
                  ("iJ"+label,"I",20,"nJetSel"+label), # index >= 0 if in Jet; -1-index (<0) if in DiscJet
                  ("nLepGood20"+label, "I"), ("nLepGood20T"+label, "I"),
-                 ## ("nJet40"+label, "I"), "htJet40j"+label, ("nBJetLoose40"+label, "I"), ("nBJetMedium40"+label, "I"),
                  ("nJet35"+label, "I"), "htJet35j"+label, ("nBJetLoose35"+label, "I"), ("nBJetMedium35"+label, "I"), 
-                 ## ("nJet25"+label, "I"), "htJet25j"+label, ("nBJetLoose25"+label, "I"), ("nBJetMedium25"+label, "I"), 
                  ("iL1T"+label, "I"), ("iL2T"+label, "I"), 
-                 "lepsMll"+label,
+                 ("lepsMll"+label),
                  ]
         for jfloat in "pt eta phi mass btagCSV rawPt".split():
             biglist.append( ("JetSel"+label+"_"+jfloat,"F",20,"nJetSel"+label) )
@@ -39,20 +37,34 @@ class edgeCleaner:
                 if lep.pt < 20: ret["nLepGood20T"] += 1
         ret["nLepTight"] = len(ret["iLT"])
         #
+        ## search for the lepton pair
+        lepst = [ leps[il] for il in ret["iLT"] ]
+        #
+        iL1iL2 = self.findPair(lepst)
+        ret['iL1T'] = ret["iLT"][ iL1iL2[0] ] if len(ret["iLT"]) >=1 else -1
+        ret['iL2T'] = ret["iLT"][ iL1iL2[1] ] if len(ret["iLT"]) >=2 else -1
+        ret['lepsMll'] = iL1iL2[2] 
+        #
+        goodlepis = [ret['iL1T'], ret['iL2T']]
         ### Define jets
         ret["iJ"] = []
         # 0. mark each jet as clean
         for j in jetsc+jetsd: j._clean = True
-        # 1. associate to each tight lepton its nearest jet 
-        for il in ret["iLT"]:
+        # 1. associate to each tight lepton its nearest jet and clean
+        for il in goodlepis:
+            if il == -1: continue
             lep = leps[il]
             best = None; bestdr = 0.4
             for j in jetsc+jetsd:
+                if abs(j.eta > 2.4) or j.pt < 35:
+                    j._clean = False
+                    continue
                 dr = deltaR(lep,j)
                 if dr < bestdr:
                     best = j; bestdr = dr
-            if best is not None and self.cleanJet(lep,best,bestdr):
+            if best is not None:
                 best._clean = False
+
         # 2. compute the jet list
         for ijc,j in enumerate(jetsc):
             if not j._clean: continue
@@ -60,8 +72,11 @@ class edgeCleaner:
         for ijd,j in enumerate(jetsd):
             if not j._clean: continue
             ret["iJ"].append(-1-ijd)
+        ret['nJetSel'] = len(ret["iJ"])
+
         # 3. sort the jets by pt
         ret["iJ"].sort(key = lambda idx : jetsc[idx].pt if idx >= 0 else jetsd[-1-idx].pt, reverse = True)
+
         # 4. compute the variables
         for jfloat in "pt eta phi mass btagCSV rawPt".split():
             jetret[jfloat] = []
@@ -75,30 +90,14 @@ class edgeCleaner:
             if self.isMC:
                 for jmc in "mcPt mcFlavour mcMatchId".split():
                     jetret[jmc].append( getattr(jet,jmc) )
+
         # 5. compute the sums
         ret["nJet35"] = 0; ret["htJet35j"] = 0; ret["nBJetLoose35"] = 0; ret["nBJetMedium35"] = 0
         for j in jetsc+jetsd:
             if not j._clean: continue
-            if j.pt > 35 and abs(j.eta) < 2.4:
-                ret["nJet35"] += 1; ret["htJet35j"] += j.pt; 
-                if j.btagCSV>0.423: ret["nBJetLoose35"] += 1
-                if j.btagCSV>0.814: ret["nBJetMedium35"] += 1
-        #
-        ### edge specific things
-        lepst = [ leps[il] for il in ret["iLT"] ]
-        ## ret['mZ1'] = self.bestZ1TL(lepsl, lepsl)
-        ## ret['mZ1cut10TL'] = self.bestZ1TL(lepsl, lepst, cut=lambda l:l.pt>10)
-        ## ret['minMllAFAS'] = self.minMllTL(lepsl, lepsl) 
-        ## ret['minMllAFOS'] = self.minMllTL(lepsl, lepsl, paircut = lambda l1,l2 : l1.charge !=  l2.charge) 
-        ## ret['minMllSFOS'] = self.minMllTL(lepsl, lepsl, paircut = lambda l1,l2 : l1.pdgId  == -l2.pdgId) 
-        ## ret['minMllAFASTL'] = self.minMllTL(lepsl, lepst) 
-        ## ret['minMllAFOSTL'] = self.minMllTL(lepsl, lepst, paircut = lambda l1,l2 : l1.charge !=  l2.charge) 
-        ## ret['minMllSFOSTL'] = self.minMllTL(lepsl, lepst, paircut = lambda l1,l2 : l1.pdgId  == -l2.pdgId) 
-        ## for (name,lepcoll) in ("T",lepst):
-        iL1iL2 = self.findPair(lepst)
-        ret['iL1'+'T'] = ret["iLT"][ iL1iL2[0] ] if len(ret["iLT"]) >=1 else -1
-        ret['iL2'+'T'] = ret["iLT"][ iL1iL2[1] ] if len(ret["iLT"]) >=2 else -1
-        ret['lepsMll'] = iL1iL2[2] 
+            ret["nJet35"] += 1; ret["htJet35j"] += j.pt; 
+            if j.btagCSV>0.423: ret["nBJetLoose35"] += 1
+            if j.btagCSV>0.814: ret["nBJetMedium35"] += 1
         #
         ### attach labels and return
         fullret = {}
@@ -148,8 +147,8 @@ if __name__ == '__main__':
         def __init__(self, name):
             Module.__init__(self,name,None)
             self.sf1 = edgeCleaner("Edge", 
-                lambda lep : lep.relIso03 < 0.15 and _susyEdge(lep),
-                cleanJet = lambda lep,jet,dr : (lep.pt > 10 and dr < 0.4))
+                lambda lep : _susyEdge(lep),
+                cleanJet = lambda lep,jet,dr : (jet.pt < 35 and dr < 0.4 and abs(jet.eta) > 2.4))
         def analyze(self,ev):
             print "\nrun %6d lumi %4d event %d: leps %d" % (ev.run, ev.lumi, ev.evt, ev.nLepGood)
             print self.sf1(ev)
