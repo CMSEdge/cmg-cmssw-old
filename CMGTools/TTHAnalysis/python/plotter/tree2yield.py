@@ -240,7 +240,7 @@ class TreeToYield:
         save = os.dup( sys.stdout.fileno() )
         newout = file( self._name+'_dump.out', 'w' )
         os.dup2( newout.fileno(), sys.stdout.fileno() )
-        self._tree.Scan(scanString,cut,'colsize=6 precision=6');
+        self._tree.Scan(scanString,cut,'colsize=6 precision=6 col=6d:12d');
         os.dup2( save, sys.stdout.fileno() )
         newout.close()
     def getYields(self,cuts,noEntryLine=False):
