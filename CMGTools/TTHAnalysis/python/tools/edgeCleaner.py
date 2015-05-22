@@ -52,8 +52,9 @@ class edgeCleaner:
         for j in jetsc+jetsd: j._clean = True
         # set _clean flag of bad jets to False
         for j in jetsc+jetsd:
-            if abs(j.eta > 2.4) or j.pt < 35:
+            if abs(j.eta) > 2.4 or j.pt < 35:
                 j._clean = False
+                continue
             for l in goodlepis:
                 if l > -1:
                     lep = leps[il]
