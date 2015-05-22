@@ -50,20 +50,15 @@ class edgeCleaner:
         ret["iJ"] = []
         # 0. mark each jet as clean
         for j in jetsc+jetsd: j._clean = True
-        # 1. associate to each tight lepton its nearest jet and clean
-        for il in goodlepis:
-            if il == -1: continue
-            lep = leps[il]
-            best = None; bestdr = 0.4
-            for j in jetsc+jetsd:
-                if abs(j.eta > 2.4) or j.pt < 35:
-                    j._clean = False
-                    continue
-                dr = deltaR(lep,j)
-                if dr < bestdr:
-                    best = j; bestdr = dr
-            if best is not None:
-                best._clean = False
+        # set _clean flag of bad jets to False
+        for j in jetsc+jetsd:
+            if abs(j.eta > 2.4) or j.pt < 35:
+                j._clean = False
+            for l in goodlepis:
+                if l > -1:
+                    lep = leps[il]
+                    if deltaR(lep,j) < 0.4:
+                        j._clean = False
 
         # 2. compute the jet list
         for ijc,j in enumerate(jetsc):
@@ -135,7 +130,8 @@ def _susyEdge(lep):
         if abs(lep.eta) > 1.4 and abs(lep.eta) < 1.6: return False
         if abs(lep.pdgId) == 13 and lep.tightId != 1: return False
         if abs(lep.pdgId) == 11 and lep.tightId < 1: return False
-        if lep.relIso03 > 0.15: return False
+        #if lep.relIso03 > 0.15: return False
+        if lep.miniRelIso > 0.1: return False
         return True
 
 if __name__ == '__main__':

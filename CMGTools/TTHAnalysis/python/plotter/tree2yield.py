@@ -238,7 +238,7 @@ class TreeToYield:
         cut = cuts.allCuts()
         self._tree.SetScanField(-1)
         save = os.dup( sys.stdout.fileno() )
-        newout = file( self._name+'_dump.out', 'w' )
+        newout = file( self._name+'_dump.txt', 'w' )
         os.dup2( newout.fileno(), sys.stdout.fileno() )
         self._tree.Scan(scanString,cut,'colsize=6 precision=6 col=6d:12d');
         os.dup2( save, sys.stdout.fileno() )
