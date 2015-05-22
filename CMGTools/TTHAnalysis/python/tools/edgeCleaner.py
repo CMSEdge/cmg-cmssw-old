@@ -57,7 +57,7 @@ class edgeCleaner:
                 continue
             for l in goodlepis:
                 if l > -1:
-                    lep = leps[il]
+                    lep = leps[l]
                     if deltaR(lep,j) < 0.4:
                         j._clean = False
 
