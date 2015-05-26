@@ -1,15 +1,15 @@
 #################################################
 ##############   MUONS   ########################
 #################################################
-only muons for now: LepGood_pdgId[0] * LepGood_pdgId[1] == -13*13
-within eta 2.4: (abs(LepGood_eta[0]) < 2.4 && abs(LepGood_eta[1]) < 2.4)
-exclude 1.4 - 1.6 in |eta|: !(abs(LepGood_eta[0]) > 1.4 && abs(LepGood_eta[0]) < 1.6) && !(abs(LepGood_eta[1]) > 1.4 && abs(LepGood_eta[1]) < 1.6)
-#lep1 and lep2 pass tight ID+iso (muons): LepGood_tightId[0] == 1 && LepGood_relIso03[0] < 0.15 && LepGood_tightId[1] == 1 && LepGood_relIso03[1] < 0.15
-lep1 and lep2 pass tight ID (muons): LepGood_tightId[0] == 1 && LepGood_tightId[1] == 1
-lep1_pt25: LepGood_pt[0] > 25 
-lep2_pt20: LepGood_pt[1] > 20 
-separated 0.3 in dR:  l1l2_DR > 0.3
-isolation of both < 0.15:  LepGood_relIso03[0] < 0.15 && LepGood_relIso03[1] < 0.15
+## only muons for now: LepGood_pdgId[0] * LepGood_pdgId[1] == -13*13
+## within eta 2.4: (abs(LepGood_eta[0]) < 2.4 && abs(LepGood_eta[1]) < 2.4)
+## exclude 1.4 - 1.6 in |eta|: !(abs(LepGood_eta[0]) > 1.4 && abs(LepGood_eta[0]) < 1.6) && !(abs(LepGood_eta[1]) > 1.4 && abs(LepGood_eta[1]) < 1.6)
+## #lep1 and lep2 pass tight ID+iso (muons): LepGood_tightId[0] == 1 && LepGood_relIso03[0] < 0.15 && LepGood_tightId[1] == 1 && LepGood_relIso03[1] < 0.15
+## lep1 and lep2 pass tight ID (muons): LepGood_tightId[0] == 1 && LepGood_tightId[1] == 1
+## lep1_pt25: LepGood_pt[0] > 25 
+## lep2_pt20: LepGood_pt[1] > 20 
+## separated 0.3 in dR:  l1l2_DR > 0.3
+## isolation of both < 0.15:  LepGood_relIso03[0] < 0.15 && LepGood_relIso03[1] < 0.15
 #################################################
 ############## ELECTRONS ########################
 #################################################
@@ -25,7 +25,7 @@ isolation of both < 0.15:  LepGood_relIso03[0] < 0.15 && LepGood_relIso03[1] < 0
 #################################################
 ##############   ELMU/OF  #######################
 #################################################
-## only muons for now: LepGood_pdgId[0] * LepGood_pdgId[1] == -13*11
+## elmu: LepGood_pdgId[0] * LepGood_pdgId[1] == -13*11
 ## within eta 2.4: (abs(LepGood_eta[0]) < 2.4 && abs(LepGood_eta[1]) < 2.4)
 ## lep1_pt25: LepGood_pt[0] > 25 
 ## lep2_pt20: LepGood_pt[1] > 20 
@@ -50,9 +50,9 @@ isolation of both < 0.15:  LepGood_relIso03[0] < 0.15 && LepGood_relIso03[1] < 0
 #################################################
 ##############  JET/MET   #######################
 #################################################
-nJets >= 1:  nJet30 >= 1 && Jet_pt[0] > 35 && abs(Jet_eta[0]) < 2.4
-nJets >= 2:  nJet30 >= 2 && Jet_pt[1] > 35 && abs(Jet_eta[1]) < 2.4
-nJets >= 3:  nJet30 >= 3 && Jet_pt[2] > 35 && abs(Jet_eta[2]) < 2.4
-MET > 50:  met_pt > 50
-MET > 150:  met_pt > 150
-MET > 200:  met_pt > 200
+## nJets >= 1:  nJet30 >= 1 && Jet_pt[0] > 35 && abs(Jet_eta[0]) < 2.4
+## nJets >= 2:  nJet30 >= 2 && Jet_pt[1] > 35 && abs(Jet_eta[1]) < 2.4
+## nJets >= 3:  nJet30 >= 3 && Jet_pt[2] > 35 && abs(Jet_eta[2]) < 2.4
+## MET > 50:  met_pt > 50
+## MET > 150:  met_pt > 150
+## MET > 200:  met_pt > 200

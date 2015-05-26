@@ -8,7 +8,7 @@ MODULES = []
 from CMGTools.TTHAnalysis.tools.edgeCleaner import edgeCleaner, _susyEdge
 MODULES.append( ('edgeCleaner', edgeCleaner("Edge",
                                 lambda lep : _susyEdge(lep),
-                                cleanJet = lambda lep,jet,dr : (lep.pt > 20 and dr < 0.4 and jet.pt > 35)) ) )
+                                cleanJet = lambda lep,jet,dr : (jet.pt < 35 and dr < 0.4)) ) )
 #from CMGTools.TTHAnalysis.tools.eventVars_2lss import EventVars2LSS 
 #MODULES.append( ('2lss', EventVars2LSS()) )
 #from CMGTools.TTHAnalysis.tools.susyVars_2lssInc import SusyVars2LSSInc 

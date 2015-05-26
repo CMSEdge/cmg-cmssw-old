@@ -213,6 +213,31 @@ elif test == 'SingleMu':
     comp.files = comp.files[:1]
     comp.splitFactor = 1
     selectedComponents = [ comp ]
+elif test == 'synch':
+    comp = TTJets
+    ## comp.files = ['root://eoscms//eos/cms/store/cmst3/user/mdunser/synching/ttjetsPHYS14/00C90EFC-3074-E411-A845-002590DB9262.root',
+    ##               'root://eoscms//eos/cms/store/cmst3/user/mdunser/synching/ttjetsPHYS14/00D3EAF1-3174-E411-A5B2-0025904B144E.root',
+    ##               'root://eoscms//eos/cms/store/cmst3/user/mdunser/synching/ttjetsPHYS14/02EF3EFC-0475-E411-A9DB-002590DB9166.root',
+    ##               'root://eoscms//eos/cms/store/cmst3/user/mdunser/synching/ttjetsPHYS14/0434E222-1C75-E411-B4D4-0025907FD34C.root',
+    ##               'root://eoscms//eos/cms/store/cmst3/user/mdunser/synching/ttjetsPHYS14/04829E8D-6174-E411-97F0-0025901D4940.root',
+    ##               'root://eoscms//eos/cms/store/cmst3/user/mdunser/synching/ttjetsPHYS14/04C50B58-7B76-E411-9101-003048D437D2.root',
+    ##               'root://eoscms//eos/cms/store/cmst3/user/mdunser/synching/ttjetsPHYS14/060D9464-7174-E411-8EC9-0025907DC9BE.root',
+    ##               'root://eoscms//eos/cms/store/cmst3/user/mdunser/synching/ttjetsPHYS14/06180A42-DA75-E411-B64E-00266CF2AE10.root',
+    ##               'root://eoscms//eos/cms/store/cmst3/user/mdunser/synching/ttjetsPHYS14/063CF1C6-C176-E411-A90A-003048F0E83A.root',
+    ##               'root://eoscms//eos/cms/store/cmst3/user/mdunser/synching/ttjetsPHYS14/0661643D-4F76-E411-862B-002590AC4E28.root']
+    comp.files = ['/afs/cern.ch/work/m/mdunser/public/synchFiles_13TeV/TTJets/00C90EFC-3074-E411-A845-002590DB9262.root',
+                  '/afs/cern.ch/work/m/mdunser/public/synchFiles_13TeV/TTJets/00D3EAF1-3174-E411-A5B2-0025904B144E.root',
+                  '/afs/cern.ch/work/m/mdunser/public/synchFiles_13TeV/TTJets/02EF3EFC-0475-E411-A9DB-002590DB9166.root',
+                  '/afs/cern.ch/work/m/mdunser/public/synchFiles_13TeV/TTJets/0434E222-1C75-E411-B4D4-0025907FD34C.root',
+                  '/afs/cern.ch/work/m/mdunser/public/synchFiles_13TeV/TTJets/04829E8D-6174-E411-97F0-0025901D4940.root',
+                  '/afs/cern.ch/work/m/mdunser/public/synchFiles_13TeV/TTJets/04C50B58-7B76-E411-9101-003048D437D2.root',
+                  '/afs/cern.ch/work/m/mdunser/public/synchFiles_13TeV/TTJets/060D9464-7174-E411-8EC9-0025907DC9BE.root',
+                  '/afs/cern.ch/work/m/mdunser/public/synchFiles_13TeV/TTJets/06180A42-DA75-E411-B64E-00266CF2AE10.root',
+                  '/afs/cern.ch/work/m/mdunser/public/synchFiles_13TeV/TTJets/063CF1C6-C176-E411-A90A-003048F0E83A.root',
+                  '/afs/cern.ch/work/m/mdunser/public/synchFiles_13TeV/TTJets/0661643D-4F76-E411-862B-002590AC4E28.root']
+    comp.finesplitFactor = 10
+    comp.finesplitFactor = 4
+    selectedComponents = [comp]
 elif test == '3':
     for comp in selectedComponents:
         comp.files = comp.files[:1]
