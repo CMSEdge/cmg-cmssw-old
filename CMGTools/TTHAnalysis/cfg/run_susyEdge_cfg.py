@@ -214,6 +214,11 @@ sequence = cfg.Sequence(susyCoreSequence+[
 
 from PhysicsTools.HeppyCore.framework.heppy import getHeppyOption
 test = getHeppyOption('test')
+print "EOOOOOOO", test
+
+test = 'synch'
+
+
 if test == '1':
     comp = TTH
     if getHeppyOption('T1tttt'):
