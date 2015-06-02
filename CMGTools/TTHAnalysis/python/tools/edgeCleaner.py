@@ -14,7 +14,7 @@ class edgeCleaner:
                  ("nLepGood20"+label, "I"), ("nLepGood20T"+label, "I"),
                  ("nJet35"+label, "I"), "htJet35j"+label, ("nBJetLoose35"+label, "I"), ("nBJetMedium35"+label, "I"), 
                  ("iL1T"+label, "I"), ("iL2T"+label, "I"), 
-                 ("lepsMll"+label),
+                 ("lepsMll"+label), ("lepsJZB"+label)
                  ]
         for jfloat in "pt eta phi mass btagCSV rawPt".split():
             biglist.append( ("JetSel"+label+"_"+jfloat,"F",20,"nJetSel"+label) )
@@ -27,6 +27,9 @@ class edgeCleaner:
         leps = [l for l in Collection(event,"LepGood","nLepGood")]
         jetsc = [j for j in Collection(event,"Jet","nJet")]
         jetsd = [j for j in Collection(event,"DiscJet","nDiscJet")]
+        (met, metphi)  = event.met_pt, event.met_phi
+        metp4 = ROOT.TLorentzVector()
+        metp4.SetPtEtaPhiM(met,0,metphi,0)
         ret = {}; jetret = {}
         #
         ### Define tight leptons
@@ -44,6 +47,7 @@ class edgeCleaner:
         ret['iL1T'] = ret["iLT"][ iL1iL2[0] ] if len(ret["iLT"]) >=1 else -1
         ret['iL2T'] = ret["iLT"][ iL1iL2[1] ] if len(ret["iLT"]) >=2 else -1
         ret['lepsMll'] = iL1iL2[2] 
+        ret['lepsJZB'] = self.getJZB(leps[ret['iL1T']].p4(), leps[ret['iL2T']].p4(), metp4)
         #
         goodlepis = [ret['iL1T'], ret['iL2T']]
         ### Define jets
@@ -103,27 +107,32 @@ class edgeCleaner:
             fullret["JetSel%s_%s" % (self.label,k)] = v
         return fullret
 
-    def findPair(self,leps):
+    def findPair(self,lepst):
         ret = (-1,-1,-999.)
-        if len(leps) == 2:
-            if leps[0].pt < 25:  ret=(-1,-1,-999.)
-            else: ret = (0, 1, (leps[0].p4() + leps[1].p4()).M() )
-        if len(leps) > 2:
+        if len(lepst) == 2:
+            if lepst[0].pt < 25:  ret=(-1,-1,-999.)
+            else: ret = (0, 1, (lepst[0].p4() + lepst[1].p4()).M() )
+        if len(lepst) > 2:
             pairs = []
-            for il1 in xrange(len(leps)-1):
-                for il2 in xrange(il1+1,len(leps)): 
-                    l1 = leps[il1]
-                    l2 = leps[il2]
+            for il1 in xrange(len(lepst)-1):
+                for il2 in xrange(il1+1,len(lepst)): 
+                    l1 = lepst[il1]
+                    l2 = lepst[il2]
                     #if l1.pt < 20 or l2.pt < 20: continue
                     if l1.pt < 25: continue
                     if (l1.charge != l2.charge and deltaR(l1,l2) > 0.3 ):
-                        ht   = l1.pt + l2.pt
+                        sumpt   = l1.pt + l2.pt
                         mll  = (l1.p4() + l2.p4()).M()
-                        pairs.append( (-ht,il1,il2,mll) )
+                        pairs.append( (-sumpt,il1,il2,mll) )
             if len(pairs):
                 pairs.sort()
                 ret = (pairs[0][1],pairs[0][2],pairs[0][3])
         return ret
+
+    def getJZB(sefl,l1, l2, metp4): # l1 and l2 are already four vectors
+        metrecoil = metp4 + l1 + l2
+        jzb = metrecoil.Pt() - (l1 + l2).Pt()
+        return jzb
 
 
 def _susyEdge(lep):

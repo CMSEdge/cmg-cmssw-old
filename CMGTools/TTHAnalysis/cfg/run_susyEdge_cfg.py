@@ -191,13 +191,19 @@ if False:
     QCDPtEMEnriched.remove(QCD_Pt10to20_EMEnriched)
     selectedComponents = [ QCD_Mu15 ] + QCD_Mu5 + QCDPtEMEnriched + QCDPtbcToE
 
-selectedComponents = [TTJets]
+susySignalT2tt = [SMS_T2tt_2J_mStop850_mLSP100, SMS_T2tt_2J_mStop650_mLSP325, SMS_T2tt_2J_mStop500_mLSP325, SMS_T2tt_2J_mStop425_mLSP325]
+
+selectedComponents = [TTJets, DYJetsToLL_M50] + DYJetsM50HT + susySignalT2tt
+
+## marc's testing for i in selectedComponents:
+## marc's testing     print 'running on', i
+## marc's testing sys.exit(0)
 
 
 # -- fine splitting, for some private MC samples with a single file
-#for comp in selectedComponents:
-#    comp.splitFactor = 400
-#    comp.fineSplitFactor = 4
+for comp in selectedComponents:
+    comp.splitFactor = 600
+    #comp.fineSplitFactor = 4
 
     
 #-------- SEQUENCE -----------
@@ -214,10 +220,6 @@ sequence = cfg.Sequence(susyCoreSequence+[
 
 from PhysicsTools.HeppyCore.framework.heppy import getHeppyOption
 test = getHeppyOption('test')
-print "EOOOOOOO", test
-
-test = 'synch'
-
 
 if test == '1':
     comp = TTH
