@@ -110,8 +110,10 @@ class edgeCleaner:
     def findPair(self,lepst):
         ret = (-1,-1,-999.)
         if len(lepst) == 2:
-            if lepst[0].pt < 25:  ret=(-1,-1,-999.)
-            else: ret = (0, 1, (lepst[0].p4() + lepst[1].p4()).M() )
+            if lepst[0].pt < 25 or deltaR(lepst[0], lepst[1]) < 0.3:#  or lepst[0].charge == lepst[1].charge:  
+                ret=(-1,-1,-999.)
+            else: 
+                ret = (0, 1, (lepst[0].p4() + lepst[1].p4()).M() )
         if len(lepst) > 2:
             pairs = []
             for il1 in xrange(len(lepst)-1):
@@ -120,7 +122,7 @@ class edgeCleaner:
                     l2 = lepst[il2]
                     #if l1.pt < 20 or l2.pt < 20: continue
                     if l1.pt < 25: continue
-                    if (l1.charge != l2.charge and deltaR(l1,l2) > 0.3 ):
+                    if deltaR(l1,l2) > 0.3: #l1.charge != l2.charge and deltaR(l1,l2) > 0.3 :
                         sumpt   = l1.pt + l2.pt
                         mll  = (l1.p4() + l2.p4()).M()
                         pairs.append( (-sumpt,il1,il2,mll) )
