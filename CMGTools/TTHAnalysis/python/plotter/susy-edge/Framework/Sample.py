@@ -1,3 +1,5 @@
+import ROOT as r
+
 from ROOT import TTree, TFile, TCut, TH1F
 
 
@@ -90,10 +92,46 @@ class Block:
 class Tree:
    'Common base class for a physics meaningful tree'
 
-   def __init__(self, name, isdata):
+   def __init__(self, fileName, name, isdata):
       self.name  = name
       self.isData = isdata
       self.blocks = []
+      self.parseFileName(fileName)
+
+   def parseFileName(self, fileName):
+
+      f = open(fileName)
+
+      for l in f.readlines():
+
+        if (l[0] == "#"):
+          continue
+
+        splitedLine = str.split(l)
+        block       = splitedLine[0]
+        color       = eval(splitedLine[1])
+        name        = splitedLine[2]
+        location    = splitedLine[3]
+        flocation   = splitedLine[4]
+        xsection    = float(splitedLine[5])
+        isdata      = int(splitedLine[6])
+
+        sample = Sample(name, location, flocation, xsection, isdata)
+        coincidentBlock = [l for l in self.blocks if l.Name == block]
+
+        if(coincidentBlock == []):
+
+          newBlock = Block(block, color, isdata)
+          newBlock.addSample(sample)
+          self.addBlock(newBlock)
+
+        else:
+
+          coincidentBlock[0].addSample(sample)
+
+
+
+
 
    def printTree(self):
 
