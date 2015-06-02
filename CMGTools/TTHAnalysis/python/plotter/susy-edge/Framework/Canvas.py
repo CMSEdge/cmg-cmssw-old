@@ -5,9 +5,9 @@ class Canvas:
    'Common base class for all Samples'
 
    def __init__(self, name, format, x1, y1, x2, y2):
-      self.Name = name
-      self.Format = format
-      self.PlotName = name + "." + format
+      self.name = name
+      self.format = format
+      self.plotName = name + "." + format
       self.myCanvas = TCanvas(name, name)
       self.histos = []
       self.options = []
@@ -154,7 +154,7 @@ class Canvas:
       #r.CMS_lumi(self.myCanvas, 4, 10)
       pad1.cd()
       self.banner(isData, lumi)
-      self.myCanvas.SaveAs(self.PlotName)
+      self.myCanvas.SaveAs(self.plotName)
 
 
 
@@ -173,7 +173,7 @@ class Canvas:
         self.myLegend.Draw()
 
       self.banner2(isData, lumi)
-      self.myCanvas.SaveAs(self.PlotName)
+      self.myCanvas.SaveAs(self.plotName)
 
 
 

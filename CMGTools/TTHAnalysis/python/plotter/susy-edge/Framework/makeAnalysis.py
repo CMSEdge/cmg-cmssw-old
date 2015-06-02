@@ -38,11 +38,12 @@ def parseFileName(fileName, name, isData):
     color       = eval(splitedLine[1]) 
     name        = splitedLine[2]
     location    = splitedLine[3]
-    xsection    = float(splitedLine[4])
-    isdata      = int(splitedLine[5])
+    flocation   = splitedLine[4]
+    xsection    = float(splitedLine[5])
+    isdata      = int(splitedLine[6])
 
     
-    sample = Sample(name, location, xsection, isdata)
+    sample = Sample(name, location, flocation, xsection, isdata)
     coincidentBlock = [l for l in tree.blocks if l.Name == block]
     
     
@@ -78,8 +79,8 @@ if __name__ == "__main__":
     r.setTDRStyle() 
     cuts = CutManager()
 
-    mll_SF = tree.getTH1F(4, "mll_SF", "l1l2_m", 40, 20, 300, cuts.DYControlNoMassLeptonSF(), "", "m_{ll} [GeV]")
-    mll_OF = tree.getTH1F(4, "mll_OF", "l1l2_m", 40, 20, 300, cuts.DYControlNoMassLeptonOF(), "", "m_{ll} [GeV]")
+    mll_SF = tree.getTH1F(4, "mll_SF", "t.lepsMll_Edge", 40, 20, 300, cuts.DYControlNoMassLeptonSF(), "", "m_{ll} [GeV]")
+    mll_OF = tree.getTH1F(4, "mll_OF", "t.lepsMll_Edge", 40, 20, 300, cuts.DYControlNoMassLeptonOF(), "", "m_{ll} [GeV]")
 
     plot = Canvas("mll", "png", 0.6, 0.6, 0.8, 0.8)
     plot.addHisto(mll_OF, "HISTO", "OF", "L", r.kBlack)

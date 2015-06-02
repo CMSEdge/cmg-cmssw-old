@@ -4,23 +4,26 @@ from ROOT import TTree, TFile, TCut, TH1F
 class Sample:
    'Common base class for all Samples'
 
-   def __init__(self, name, location, xsection, isdata):
-      self.Name = name
-      self.Location = location
-      self.XSection = xsection
-      self.IsData = isdata
-      self.tfile = TFile(self.Location)
-      self.ttree = self.tfile.Get("tree")
+   def __init__(self, name, location, friendlocation, xsection, isdata):
+      self.name = name
+      self.location = location
+      self.xSection = xsection
+      self.isData = isdata
+      self.tfile = TFile(self.location+self.name+'/treeProducerSusyEdge/tree.root')
+      self.ftfile = TFile(self.location+'/'+friendlocation+'/evVarFriend_'+self.name+'.root')
+      self.ttree = self.tfile.Get('tree')
+      self.ttree.AddFriend('sf/t',self.ftfile)
+      self.count = self.tfile.Get('Count')
       self.lumWeight = 1.0
-      if(self.IsData == 0):
-        self.lumWeight = self.XSection / self.ttree.GetEntries()
+      if(self.isData == 0):
+        self.lumWeight = self.xSection / self.count.GetEntries()
 
    def printSample(self):
       print "#################################"
-      print "Sample Name: ", self.Name
-      print "Sample Location: ", self.Location
-      print "Sample XSection: ", self.XSection
-      print "Sample IsData: ", self.IsData
+      print "Sample Name: ", self.name
+      print "Sample Location: ", self.location
+      print "Sample XSection: ", self.xSection
+      print "Sample IsData: ", self.isData
       print "Sample LumWeight: ", self.lumWeight
       print "#################################"
 
@@ -34,7 +37,7 @@ class Sample:
       ylabel = "Events / " + str(b) + " GeV"
       h.GetYaxis().SetTitle(ylabel)
       
-      if(self.IsData == 0):
+      if(self.isData == 0):
         cut = cut + "* ( " + str(self.lumWeight*lumi) + " )" 
       
       self.ttree.Project(name, var, cut, options) 
@@ -45,17 +48,17 @@ class Block:
    'Common base class for all Sample Blocks'
 
    def __init__(self, name, color, isdata):
-      self.Name  = name
-      self.Color = color
-      self.IsData = isdata
+      self.name  = name
+      self.color = color
+      self.isData = isdata
       self.samples = []
 
    def printBlock(self):
 
       print "####################"
-      print "Block Name: ", self.Name
-      print "Block Color: ", self.Color
-      print "Block IsData: ", self.IsData
+      print "Block Name: ", self.name
+      print "Block Color: ", self.color
+      print "Block IsData: ", self.isData
       print "####################"
       print "This block contains the following Samples"
 
@@ -76,7 +79,7 @@ class Block:
      h.GetYaxis().SetTitle(ylabel)
 
      for s in self.samples:
-       AuxName = "aux_sample" + s.Name
+       AuxName = "aux_sample" + s.name
        haux = s.getTH1F(lumi, AuxName, var, nbin, xmin, xmax, cut, options, xlabel)
        h.Add(haux)
        del haux
@@ -88,15 +91,15 @@ class Tree:
    'Common base class for a physics meaningful tree'
 
    def __init__(self, name, isdata):
-      self.Name  = name
-      self.IsData = isdata
+      self.name  = name
+      self.isData = isdata
       self.blocks = []
 
    def printTree(self):
 
       print "######"
-      print "Tree Name: ", self.Name
-      print "Tree IsData: ", self.IsData
+      print "Tree Name: ", self.name
+      print "Tree IsData: ", self.isData
       print "######"
       print "This Tree contains the following Blocks"
 
@@ -119,7 +122,7 @@ class Tree:
      
      for b in self.blocks:
      
-       AuxName = "aux_block" + b.Name
+       AuxName = "aux_block" + b.name
        haux = b.getTH1F(lumi, AuxName, var, nbin, xmin, xmax, cut, options, xlabel)
        h.Add(haux)
        del haux

@@ -5,23 +5,25 @@ class CutManager:
 
    def __init__(self):
 
-      self.twoLeptons = "nLepGood > 1"
-      self.leptonPt = "LepGood_pt[0] > 25 && LepGood_pt[1] > 20 && l1l2_m > 20"
-      self.leptonEta = "abs(LepGood_eta[0]) < 2.4 && abs(LepGood_eta[1]) < 2.4"
-      self.ECALCrack = "abs(abs(LepGood_eta[0])-1.5) > 0.1 && abs(abs(LepGood_eta[1])-1.5) > 0.1"
-      self.leptonDR = "l1l2_DR > 0.3"       
-      self.leptonID = "LepGood_tightId[0] > 0 && LepGood_tightId[1] > 0"
-      self.goodLepton = self.twoLeptons + " && " + self.leptonPt + " && " + self.leptonEta + " && " + self.ECALCrack  + " && " + self.leptonDR + " && " + self.leptonID
-      self.ee = "LepGood_pdgId[0] * LepGood_pdgId[1] == -121"
-      self.mm = "LepGood_pdgId[0] * LepGood_pdgId[1] == -169"
-      self.OF = "LepGood_pdgId[0] * LepGood_pdgId[1] == -143"
+      self.twoLeptons = "t.iL1T_Edge > -1 && t.iL2T_Edge > -1"
+      self.leptonsMll = "t.lepsMll_Edge > 20"
+      ## self.leptonPt = "LepGood_pt[iL1T_Edge] > 25 && LepGood_pt[iL2T_Edge] > 20 && lepsMll_Edge > 20"
+      ## self.leptonEta = "abs(LepGood_eta[0]) < 2.4 && abs(LepGood_eta[1]) < 2.4"
+      ## self.ECALCrack = "abs(abs(LepGood_eta[0])-1.5) > 0.1 && abs(abs(LepGood_eta[1])-1.5) > 0.1"
+      ## self.leptonDR = "l1l2_DR > 0.3"       
+      ## self.leptonID = "LepGood_tightId[0] > 0 && LepGood_tightId[1] > 0"
+      ## self.goodLepton = self.twoLeptons + " && " + self.leptonPt + " && " + self.leptonEta + " && " + self.ECALCrack  + " && " + self.leptonDR + " && " + self.leptonID
+      self.goodLepton = self.twoLeptons + "&&" + self.leptonsMll
+      self.ee = "LepGood_pdgId[t.iL1T_Edge] * LepGood_pdgId[t.iL2T_Edge] == -121"
+      self.mm = "LepGood_pdgId[t.iL1T_Edge] * LepGood_pdgId[t.iL2T_Edge] == -169"
+      self.OF = "LepGood_pdgId[t.iL1T_Edge] * LepGood_pdgId[t.iL2T_Edge] == -143"
       self.SF = "(" + self.ee + " || " +  self.mm + ")"
-      self.METJetsSignalRegion = "((met_pt > 150 && nJet > 1) || (met_pt > 100 && nJet > 2))"
-      self.METJetsControlRegion = "(met_pt > 100 && met_pt < 150 && nJet == 2)"
-      self.DYControlRegion = "(met_pt < 50 && nJet == 2)"
-      self.lowmass = "l1l2_m > 20 && l1l2_m < 70"
-      self.Zmass = "l1l2_m > 81 && l1l2_m < 101"
-      self.highmass = "l1l2_m > 120"
+      self.METJetsSignalRegion = "((met_pt > 150 && t.nJetSel_Edge > 1) || (met_pt > 100 && t.nJetSel_Edge > 2))"
+      self.METJetsControlRegion = "(met_pt > 100 && met_pt < 150 && t.nJetSel_Edge == 2)"
+      self.DYControlRegion = "(met_pt < 50 && t.nJetSel_Edge == 2)"
+      self.lowmass = "t.lepsMll_Edge > 20 && t.lepsMll_Edge < 70"
+      self.Zmass = "t.lepsMll_Edge > 81 && t.lepsMll_Edge < 101"
+      self.highmass = "t.lepsMll_Edge > 120"
        
 
    def GoodLeptonSF(self):

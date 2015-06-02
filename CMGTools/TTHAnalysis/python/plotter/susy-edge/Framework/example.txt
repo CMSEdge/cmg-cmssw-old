@@ -1,1 +1,1 @@
-TTJets r.kBlack TTJets /afs/cern.ch/work/m/mdunser/public/edgeTrees/Synch3/TTJets/treeProducerSusyEdge/tree.root 0.83176 0
+TTJets r.kBlack TTJets /afs/cern.ch/work/m/mdunser/public/edgeTrees/shortSynch_noJEC_24052015/ edgeFriends/ 0.83176 0
