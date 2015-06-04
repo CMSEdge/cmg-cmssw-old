@@ -22,45 +22,6 @@ from CutManager import CutManager
 from Canvas import Canvas
 
 
-def parseFileName(fileName, name, isData):
-
-  f = open(inputFileName)
-
-  tree = Tree(name, isData)
-
-  for l in f.readlines():
-
-    if (l[0] == "#"):
-      continue
-    
-    splitedLine = str.split(l)
-    block       = splitedLine[0]
-    color       = eval(splitedLine[1]) 
-    name        = splitedLine[2]
-    location    = splitedLine[3]
-    flocation   = splitedLine[4]
-    xsection    = float(splitedLine[5])
-    isdata      = int(splitedLine[6])
-
-    
-    sample = Sample(name, location, flocation, xsection, isdata)
-    coincidentBlock = [l for l in tree.blocks if l.Name == block]
-    
-    
-    if(coincidentBlock == []):
-    
-      newBlock = Block(block, color, isdata)
-      newBlock.addSample(sample)
-      tree.addBlock(newBlock)
-
-    else:
-
-      coincidentBlock[0].addSample(sample)
-        
-    
-  return tree
-
-
 
 if __name__ == "__main__":
 
@@ -72,7 +33,7 @@ if __name__ == "__main__":
       parser.error("wrong number of arguments")
 
     inputFileName = args[0]
-    tree = parseFileName(inputFileName, "MC", 0)
+    tree = Tree(inputFileName, "MC", 0)
    
     gROOT.ProcessLine('.L tdrstyle.C')
     gROOT.SetBatch(1)
