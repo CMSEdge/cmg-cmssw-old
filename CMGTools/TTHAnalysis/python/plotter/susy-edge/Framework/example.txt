@@ -1,1 +1,8 @@
-TTJets r.kBlack TTJets /afs/cern.ch/work/m/mdunser/public/edgeTrees/shortSynch_noJEC_24052015/ edgeFriends/ 0.83176 0
+TTJets r.kBlack TTJets /afs/cern.ch/work/m/mdunser/public/edgeTrees/allSamples_02062015/ edgeFriends/ 0.83176 0
+## SMS_T2tt_2J_mStop850_mLSP100
+## SMS_T2tt_2J_mStop425_mLSP325
+## DYJetsToLL_M50_HT100to200
+## DYJetsToLL_M50_HT200to400
+## DYJetsToLL_M50_HT400to600
+## DYJetsToLL_M50_HT600toInf
+## DYJetsToLL_M50

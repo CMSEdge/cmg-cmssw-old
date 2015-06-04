@@ -104,7 +104,7 @@ class Tree:
 
       for l in f.readlines():
 
-        if (l[0] == "#"):
+        if (l[0] == "#" or len(l) < 2):
           continue
 
         splitedLine = str.split(l)
