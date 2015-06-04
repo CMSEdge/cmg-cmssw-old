@@ -5,18 +5,18 @@ class CutManager:
 
    def __init__(self):
 
-      self.twoLeptons = "t.iL1T_Edge > -1 && t.iL2T_Edge > -1"
+      self.twoLeptons = "t.nPairLep_Edge > 0"
+      self.leptonPt = "t.Lep_Edge_pt[0] > 25. && t.Lep_Edge_pt[1] > 20."
+      self.leptonDR = "t.lepsDR_Edge > 0.3"       
+      self.ECALCrack = "abs(abs(Lep_Edge_eta[0]) - 1.5) > 0.1 && abs(abs(Lep_Edge_eta[1]) - 1.5) > 0.1"
       self.leptonsMll = "t.lepsMll_Edge > 20"
-      ## self.leptonPt = "LepGood_pt[iL1T_Edge] > 25 && LepGood_pt[iL2T_Edge] > 20 && lepsMll_Edge > 20"
       ## self.leptonEta = "abs(LepGood_eta[0]) < 2.4 && abs(LepGood_eta[1]) < 2.4"
-      ## self.ECALCrack = "abs(abs(LepGood_eta[0])-1.5) > 0.1 && abs(abs(LepGood_eta[1])-1.5) > 0.1"
-      ## self.leptonDR = "l1l2_DR > 0.3"       
       ## self.leptonID = "LepGood_tightId[0] > 0 && LepGood_tightId[1] > 0"
       ## self.goodLepton = self.twoLeptons + " && " + self.leptonPt + " && " + self.leptonEta + " && " + self.ECALCrack  + " && " + self.leptonDR + " && " + self.leptonID
-      self.goodLepton = self.twoLeptons + "&&" + self.leptonsMll
-      self.ee = "LepGood_pdgId[t.iL1T_Edge] * LepGood_pdgId[t.iL2T_Edge] == -121"
-      self.mm = "LepGood_pdgId[t.iL1T_Edge] * LepGood_pdgId[t.iL2T_Edge] == -169"
-      self.OF = "LepGood_pdgId[t.iL1T_Edge] * LepGood_pdgId[t.iL2T_Edge] == -143"
+      self.goodLepton = self.twoLeptons + "&&" + self.leptonPt + "&&" + self.leptonDR + "&&" + self.ECALCrack + "&&" + self.leptonsMll
+      self.ee = "Lep_Edge_pdgId[0] * Lep_Edge_pdgId[1] == -121"
+      self.mm = "Lep_Edge_pdgId[0] * Lep_Edge_pdgId[1] == -169"
+      self.OF = "Lep_Edge_pdgId[0] * Lep_Edge_pdgId[1] == -143"
       self.SF = "(" + self.ee + " || " +  self.mm + ")"
       self.METJetsSignalRegion = "((met_pt > 150 && t.nJetSel_Edge > 1) || (met_pt > 100 && t.nJetSel_Edge > 2))"
       self.METJetsControlRegion = "(met_pt > 100 && met_pt < 150 && t.nJetSel_Edge == 2)"
@@ -24,8 +24,8 @@ class CutManager:
       self.lowmass = "t.lepsMll_Edge > 20 && t.lepsMll_Edge < 70"
       self.Zmass = "t.lepsMll_Edge > 81 && t.lepsMll_Edge < 101"
       self.highmass = "t.lepsMll_Edge > 120"
-      self.central = "(LepGood_eta[t.iL1T_Edge]<1.4 && LepGood_eta[t.iL1T_Edge]<1.4)"
-      self.forward = "(LepGood_eta[t.iL1T_Edge]>1.4 || LepGood_eta[t.iL2T_Edge]>1.4)"
+      self.central = "(t.Lep_Edge_eta[0]<1.4 && t.Lep_Edge_eta[1]<1.4)"
+      self.forward = "(t.Lep_Edge_eta[0]>1.4 || t.Lep_Edge_eta[1]>1.4)"
 
 
    def Add(self, cut1, cut2):
