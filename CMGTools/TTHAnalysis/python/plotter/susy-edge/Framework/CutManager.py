@@ -24,8 +24,8 @@ class CutManager:
       self.lowmass = "t.lepsMll_Edge > 20 && t.lepsMll_Edge < 70"
       self.Zmass = "t.lepsMll_Edge > 81 && t.lepsMll_Edge < 101"
       self.highmass = "t.lepsMll_Edge > 120"
-      self.central = "(t.Lep_Edge_eta[0]<1.4 && t.Lep_Edge_eta[1]<1.4)"
-      self.forward = "(t.Lep_Edge_eta[0]>1.4 || t.Lep_Edge_eta[1]>1.4)"
+      self.central = "(abs(t.Lep_Edge_eta[0])<1.4 && abs(t.Lep_Edge_eta[1])<1.4)"
+      self.forward = "(abs(t.Lep_Edge_eta[0])>1.4 || abs(t.Lep_Edge_eta[1])>1.4)"
 
 
    def Add(self, cut1, cut2):
