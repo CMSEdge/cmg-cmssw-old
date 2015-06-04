@@ -8,14 +8,19 @@ class edgeCleaner:
         self.isMC = isMC
     def listBranches(self):
         label = self.label
-        biglist = [ ("nLepTight"+label, "I"), ("nJetSel"+label, "I"), 
+        biglist = [ ("nLepTight"+label, "I"), ("nJetSel"+label, "I"), ("nPairLep"+label, "I"),
                  ("iLT"+label,"I",20,"nLepTight"+label), 
                  ("iJ"+label,"I",20,"nJetSel"+label), # index >= 0 if in Jet; -1-index (<0) if in DiscJet
                  ("nLepGood20"+label, "I"), ("nLepGood20T"+label, "I"),
                  ("nJet35"+label, "I"), "htJet35j"+label, ("nBJetLoose35"+label, "I"), ("nBJetMedium35"+label, "I"), 
                  ("iL1T"+label, "I"), ("iL2T"+label, "I"), 
-                 ("lepsMll"+label), ("lepsJZB"+label)
+                 ("lepsMll"+label), ("lepsJZB"+label), ("lepsDR"+label), ("lepsMETRec"+label), ("lepsZPt"+label)
                  ]
+        for lfloat in 'pt eta phi miniRelIso pdgId'.split():
+            if lfloat == 'pdgId':
+                biglist.append( ("Lep"+label+"_"+lfloat,"I", 10, "nPairLep"+label) )
+            else:
+                biglist.append( ("Lep"+label+"_"+lfloat,"F", 10, "nPairLep"+label) )
         for jfloat in "pt eta phi mass btagCSV rawPt".split():
             biglist.append( ("JetSel"+label+"_"+jfloat,"F",20,"nJetSel"+label) )
         if self.isMC:
@@ -24,32 +29,80 @@ class edgeCleaner:
             biglist.append( ("JetSel"+label+"_mcMatchId","I",20,"nJetSel"+label) )
         return biglist
     def __call__(self,event):
-        leps = [l for l in Collection(event,"LepGood","nLepGood")]
+        leps  = [l for l in Collection(event,"LepGood","nLepGood")]
+        lepso = [l for l in Collection(event,"LepOther","nLepOther")]
         jetsc = [j for j in Collection(event,"Jet","nJet")]
         jetsd = [j for j in Collection(event,"DiscJet","nDiscJet")]
         (met, metphi)  = event.met_pt, event.met_phi
         metp4 = ROOT.TLorentzVector()
         metp4.SetPtEtaPhiM(met,0,metphi,0)
-        ret = {}; jetret = {}
+        ret = {}; jetret = {}; 
+        lepret = {}
         #
         ### Define tight leptons
         ret["iLT"] = []; ret["nLepGood20T"] = 0
+
+        # good leptons
         for il,lep in enumerate(leps):
-            if self.tightLeptonSel(lep):
+            clean = True
+            if abs(lep.pdgId) == 11:
+                for jl,lep2 in enumerate(leps):
+                    if jl == il: continue
+                    if abs(lep2.pdgId) == 13 and self.tightLeptonSel(lep2) and deltaR(lep, lep2) < 0.05:
+                        clean = False
+            if self.tightLeptonSel(lep) and clean:
                 ret["iLT"].append(il)
-                if lep.pt < 20: ret["nLepGood20T"] += 1
+                if lep.pt > 20: ret["nLepGood20T"] += 1
+        # other leptons, negative indices
+        for il,lep in enumerate(lepso):
+            clean = True
+            if abs(lep.pdgId) == 11:
+                for jl,lep2 in enumerate(leps):
+                    if jl == il: continue
+                    if abs(lep2.pdgId) == 13 and self.tightLeptonSel(lep2) and deltaR(lep, lep2) < 0.05:
+                        clean = False
+            if self.tightLeptonSel(lep) and clean:
+                ret["iLT"].append(-1-il)
+                if lep.pt > 20: ret["nLepGood20T"] += 1
         ret["nLepTight"] = len(ret["iLT"])
         #
+        # sort the leptons by pT:
+        ret["iLT"].sort(key = lambda idx : leps[idx].pt if idx >= 0 else lepso[-1-idx].pt, reverse = True)
+
         ## search for the lepton pair
-        lepst = [ leps[il] for il in ret["iLT"] ]
+        #lepst  = [ leps [il] for il in ret["iLT"] ]
+
+        lepst = []
+        for il in ret['iLT']:
+            if il >=0: 
+                lepst.append(leps[il])
+            else: 
+                lepst.append(lepso[-1-il])
         #
-        iL1iL2 = self.findPair(lepst)
-        ret['iL1T'] = ret["iLT"][ iL1iL2[0] ] if len(ret["iLT"]) >=1 else -1
-        ret['iL2T'] = ret["iLT"][ iL1iL2[1] ] if len(ret["iLT"]) >=2 else -1
+
+        iL1iL2 = self.getPairVariables(lepst, metp4)
+        ret['iL1T'] = ret["iLT"][ iL1iL2[0] ] if (len(ret["iLT"]) >=1 and iL1iL2[0] != -999) else -999
+        ret['iL2T'] = ret["iLT"][ iL1iL2[1] ] if (len(ret["iLT"]) >=2 and iL1iL2[1] != -999) else -999
         ret['lepsMll'] = iL1iL2[2] 
-        ret['lepsJZB'] = self.getJZB(leps[ret['iL1T']].p4(), leps[ret['iL2T']].p4(), metp4)
-        #
-        goodlepis = [ret['iL1T'], ret['iL2T']]
+        ret['lepsJZB'] = iL1iL2[3] 
+        ret['lepsDR'] = iL1iL2[4] 
+        ret['lepsMETRec'] = iL1iL2[5] 
+        ret['lepsZPt'] = iL1iL2[6] 
+
+
+        if ret['iL1T'] != -999 and ret['iL1T'] != -999:
+            ret['nPairLep'] = 2
+            for lfloat in 'pt eta phi miniRelIso pdgId'.split():
+                lepret[lfloat] = []
+            # compute the variables for the two leptons in the pair
+            for idx in [ret['iL1T'], ret['iL2T']]:
+                lep = leps[idx] if idx >= 0 else lepso[-1-idx]
+                for lfloat in 'pt eta phi miniRelIso pdgId'.split():
+                    lepret[lfloat].append( getattr(lep,lfloat) )
+        else:
+            ret['nPairLep'] = 0
+            
+
         ### Define jets
         ret["iJ"] = []
         # 0. mark each jet as clean
@@ -59,11 +112,10 @@ class edgeCleaner:
             if abs(j.eta) > 2.4 or j.pt < 35:
                 j._clean = False
                 continue
-            for l in goodlepis:
-                if l > -1:
-                    lep = leps[l]
-                    if deltaR(lep,j) < 0.4:
-                        j._clean = False
+            for l in lepst:
+                #lep = leps[l]
+                if deltaR(l,j) < 0.4:
+                    j._clean = False
 
         # 2. compute the jet list
         for ijc,j in enumerate(jetsc):
@@ -105,44 +157,52 @@ class edgeCleaner:
             fullret[k+self.label] = v
         for k,v in jetret.iteritems(): 
             fullret["JetSel%s_%s" % (self.label,k)] = v
+        for k,v in lepret.iteritems(): 
+            fullret["Lep%s_%s" % (self.label,k)] = v
         return fullret
 
-    def findPair(self,lepst):
-        ret = (-1,-1,-999.)
-        if len(lepst) == 2:
-            if lepst[0].pt < 25 or deltaR(lepst[0], lepst[1]) < 0.3:#  or lepst[0].charge == lepst[1].charge:  
-                ret=(-1,-1,-999.)
-            else: 
-                ret = (0, 1, (lepst[0].p4() + lepst[1].p4()).M() )
-        if len(lepst) > 2:
-            pairs = []
-            for il1 in xrange(len(lepst)-1):
-                for il2 in xrange(il1+1,len(lepst)): 
-                    l1 = lepst[il1]
-                    l2 = lepst[il2]
-                    #if l1.pt < 20 or l2.pt < 20: continue
-                    if l1.pt < 25: continue
-                    if deltaR(l1,l2) > 0.3: #l1.charge != l2.charge and deltaR(l1,l2) > 0.3 :
-                        sumpt   = l1.pt + l2.pt
-                        mll  = (l1.p4() + l2.p4()).M()
-                        pairs.append( (-sumpt,il1,il2,mll) )
-            if len(pairs):
-                pairs.sort()
-                ret = (pairs[0][1],pairs[0][2],pairs[0][3])
-        return ret
+    def getMll_JZB(self, l1, l2, met):
+        metrecoil = (met + l1 + l2).Pt()
+        zpt = (l1 + l2).Pt()
+        jzb = metrecoil - zpt
+        return (l1+l2).M(), jzb, l1.DeltaR(l2), metrecoil, zpt
 
-    def getJZB(sefl,l1, l2, metp4): # l1 and l2 are already four vectors
-        metrecoil = metp4 + l1 + l2
-        jzb = metrecoil.Pt() - (l1 + l2).Pt()
-        return jzb
+    def getPairVariables(self,lepst, metp4):
+        ret = (-999,-999,-99., 0., -99., -99., -99.)
+        if len(lepst) >= 2:
+            [mll, jzb, dr, metrec, zpt] = self.getMll_JZB(lepst[0].p4(), lepst[1].p4(), metp4)
+            ret = (0, 1, mll, jzb, dr, metrec, zpt)
+        return ret
+    ## def findPair(self,lepst):
+    ##     ret = (-999,-999,-999.)
+    ##     if len(lepst) == 2:
+    ##         if lepst[0].pt < 25 or deltaR(lepst[0], lepst[1]) < 0.3:#  or lepst[0].charge == lepst[1].charge:  
+    ##             ret=(-999,-999,-999.)
+    ##         else: 
+    ##             ret = (0, 1, (lepst[0].p4() + lepst[1].p4()).M() )
+    ##     elif len(lepst) > 2:
+    ##         pairs = []
+    ##         for il1 in xrange(len(lepst)-1):
+    ##             for il2 in xrange(il1+1,len(lepst)): 
+    ##                 l1 = lepst[il1]
+    ##                 l2 = lepst[il2]
+    ##                 #if l1.pt < 20 or l2.pt < 20: continue
+    ##                 if l1.pt < 25: continue
+    ##                 if deltaR(l1,l2) > 0.3: #l1.charge != l2.charge and deltaR(l1,l2) > 0.3 :
+    ##                     sumpt   = l1.pt + l2.pt
+    ##                     mll  = (l1.p4() + l2.p4()).M()
+    ##                     pairs.append( (-sumpt,il1,il2,mll) )
+    ##         if len(pairs):
+    ##             pairs.sort()
+    ##             ret = (pairs[0][1],pairs[0][2],pairs[0][3])
+    ##     return ret
 
 
 def _susyEdge(lep):
-        if lep.pt <= 20.: return False
-        if abs(lep.eta) > 1.4 and abs(lep.eta) < 1.6: return False
+        if lep.pt <= 10.: return False
+        ##if abs(lep.eta) > 1.4 and abs(lep.eta) < 1.6: return False
         if abs(lep.pdgId) == 13 and lep.tightId != 1: return False
-        if abs(lep.pdgId) == 11 and lep.tightId < 1: return False
-        #if lep.relIso03 > 0.15: return False
+        if abs(lep.pdgId) == 11 and (lep.tightId < 1 or (abs(lep.etaSc) > 1.4442 and abs(lep.etaSc) < 1.566)) : return False
         if lep.miniRelIso > 0.1: return False
         return True
 
