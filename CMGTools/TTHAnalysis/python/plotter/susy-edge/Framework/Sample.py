@@ -17,7 +17,7 @@ class Sample:
       self.ttree.AddFriend('sf/t',self.ftfile)
       self.count = self.tfile.Get('Count')
       self.lumWeight = 1.0
-      if(self.isData == 0):
+      if not self.isData:
         self.lumWeight = self.xSection / self.count.GetEntries()
 
    def printSample(self):
@@ -117,7 +117,7 @@ class Tree:
         isdata      = int(splitedLine[6])
 
         sample = Sample(name, location, flocation, xsection, isdata)
-        coincidentBlock = [l for l in self.blocks if l.Name == block]
+        coincidentBlock = [l for l in self.blocks if l.name == block]
 
         if(coincidentBlock == []):
 

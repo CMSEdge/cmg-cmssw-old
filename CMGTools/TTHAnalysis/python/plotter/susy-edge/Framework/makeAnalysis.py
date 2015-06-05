@@ -40,17 +40,19 @@ if __name__ == "__main__":
     r.setTDRStyle() 
     cuts = CutManager()
 
-    mll_SF = tree.getTH1F(4, "mll_SF", "t.lepsMll_Edge", 40, 20, 300, cuts.DYControlNoMassLeptonSF(), "", "m_{ll} [GeV]")
-    mll_OF = tree.getTH1F(4, "mll_OF", "t.lepsMll_Edge", 40, 20, 300, cuts.DYControlNoMassLeptonOF(), "", "m_{ll} [GeV]")
+    mll_SF = tree.getTH1F(4, "mll_SF", "t.lepsMll_Edge", 40, 20, 300, cuts.DYControlNoMassLeptonSF(), "", "m_{ll} (GeV)")
+    mll_OF = tree.getTH1F(4, "mll_OF", "t.lepsMll_Edge", 40, 20, 300, cuts.DYControlNoMassLeptonOF(), "", "m_{ll} (GeV)")
+
+    jzb_SF = tree.getTH1F(4, "jzb_SF", "t.lepsJZB_Edge", 40, -100, 100, cuts.DYControlNoMassLeptonSF(), "", "JZB (GeV)")
 
     plot = Canvas("mll", "png", 0.6, 0.6, 0.8, 0.8)
     plot.addHisto(mll_OF, "HISTO", "OF", "L", r.kBlack)
     plot.addHisto(mll_SF, "E1,SAME", "SF", "P", r.kBlue)
-    plot.saveRatio(1, 0, 1, 4.0)
+    plot.saveRatio(1, 0, 1, 4.0, 0.8, 1.2)
     
-    plot2 = Canvas("pt", "png", 0.6, 0.6, 0.8, 0.8)
-    plot2.addHisto(mll_OF, "HISTO", "OF", "L", r.kBlack)
-    plot2.save(0, 0, 1, 4.0)
+    plot2 = Canvas("jzb", "png,pdf", 0.6, 0.6, 0.8, 0.8)
+    plot2.addHisto(jzb_SF, "PE", "SF", "F", r.kBlack)
+    plot2.save(0, 0, 0, 4.0)
     
 
 

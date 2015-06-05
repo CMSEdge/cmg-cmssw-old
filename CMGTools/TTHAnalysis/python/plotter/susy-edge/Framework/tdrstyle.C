@@ -81,7 +81,7 @@ void setTDRStyle(bool fatline=true) {
   tdrStyle->SetPadBottomMargin(0.13);
   tdrStyle->SetPadLeftMargin(0.13);
   //tdrStyle->SetPadRightMargin(0.05);
-  tdrStyle->SetPadRightMargin(0.16);
+  tdrStyle->SetPadRightMargin(0.10);
 
   //gPad->SetRightMargin(0.16) ?
   // For the Global title:

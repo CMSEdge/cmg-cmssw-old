@@ -7,7 +7,7 @@ class Canvas:
    def __init__(self, name, format, x1, y1, x2, y2):
       self.name = name
       self.format = format
-      self.plotName = name + "." + format
+      self.plotNames = [name + "." + i for i in format.split(',')]
       self.myCanvas = TCanvas(name, name)
       self.histos = []
       self.options = []
@@ -101,7 +101,7 @@ class Canvas:
       self.labelsOption.append(labelOption)
       
 
-   def saveRatio(self, legend, isData, log, lumi):
+   def saveRatio(self, legend, isData, log, lumi, r_ymin=0, r_ymax=2):
 
       self.myCanvas.cd()
 
@@ -130,7 +130,7 @@ class Canvas:
       ratio = self.histos[0].Clone("ratio")
       ratio.Divide(self.histos[1])
       ratio.SetTitle("")
-      ratio.GetYaxis().SetRangeUser(0, 2);
+      ratio.GetYaxis().SetRangeUser(r_ymin, r_ymax);
       ratio.GetYaxis().SetTitle("Ratio");
       ratio.GetYaxis().CenterTitle();
       ratio.GetYaxis().SetLabelSize(0.12);
@@ -154,7 +154,8 @@ class Canvas:
       #r.CMS_lumi(self.myCanvas, 4, 10)
       pad1.cd()
       self.banner(isData, lumi)
-      self.myCanvas.SaveAs(self.plotName)
+      for plotName in self.plotNames:
+        self.myCanvas.SaveAs(plotName)
 
 
 
@@ -173,7 +174,8 @@ class Canvas:
         self.myLegend.Draw()
 
       self.banner2(isData, lumi)
-      self.myCanvas.SaveAs(self.plotName)
+      for plotName in self.plotNames:
+        self.myCanvas.SaveAs(plotName)
 
 
 
