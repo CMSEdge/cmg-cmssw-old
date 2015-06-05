@@ -1,6 +1,6 @@
 import ROOT as r
 
-from ROOT import TTree, TFile, TCut, TH1F
+from ROOT import TTree, TFile, TCut, TH1F, TH2F
 
 
 class Sample:
@@ -45,6 +45,18 @@ class Sample:
       self.ttree.Project(name, var, cut, options) 
       return h
 
+   def getTH2F(self, lumi, name, var, nbinx, xmin, xmax, nbiny, ymin, ymax, cut, options, xlabel, ylabel):
+   
+     h = TH2F(name, "", nbinx, xmin, xmax, nbiny, ymin, ymax)
+     h.Sumw2()
+     h.GetXaxis().SetTitle(xlabel)
+     h.GetYaxis().SetTitle(ylabel)
+     
+     if(self.isData == 0):
+        cut = cut + "* ( " + str(self.lumWeight*lumi) + " )" 
+     
+     self.ttree.Project(name, var, cut, options) 
+     return h
 
 class Block:
    'Common base class for all Sample Blocks'
@@ -87,6 +99,23 @@ class Block:
        del haux
 
      return h
+
+   def getTH2F(self, lumi, name, var, nbinx, xmin, xmax, nbiny, ymin, ymax, cut, options, xlabel, ylabel):
+   
+     h = TH2F(name, "", nbinx, xmin, xmax, nbiny, ymin, ymax)
+     h.Sumw2()
+     h.GetXaxis().SetTitle(xlabel)
+     h.GetYaxis().SetTitle(ylabel)
+     
+     for s in self.samples:
+     
+       AuxName = "aux_block" + s.name
+       haux = s.getTH2F(lumi, AuxName, var, nbinx, xmin, xmax, nbiny, ymin, ymax, cut, options, xlabel, ylabel)
+       h.Add(haux)
+       del haux
+
+     return h   
+
        
 
 class Tree:
@@ -154,14 +183,30 @@ class Tree:
      h = TH1F(name, "", nbin, xmin, xmax)
      h.Sumw2()
      h.GetXaxis().SetTitle(xlabel)
-     b = int((xmax-xmin)/nbin)
-     ylabel = "Events / " + str(b) + " GeV"
+     bw = int((xmax-xmin)/nbin)
+     ylabel = "Events / " + str(bw) + " GeV"
      h.GetYaxis().SetTitle(ylabel)
      
      for b in self.blocks:
      
        AuxName = "aux_block" + b.name
        haux = b.getTH1F(lumi, AuxName, var, nbin, xmin, xmax, cut, options, xlabel)
+       h.Add(haux)
+       del haux
+
+     return h   
+
+   def getTH2F(self, lumi, name, var, nbinx, xmin, xmax, nbiny, ymin, ymax, cut, options, xlabel, ylabel):
+   
+     h = TH2F(name, "", nbinx, xmin, xmax, nbiny, ymin, ymax)
+     h.Sumw2()
+     h.GetXaxis().SetTitle(xlabel)
+     h.GetYaxis().SetTitle(ylabel)
+     
+     for b in self.blocks:
+     
+       AuxName = "aux_block" + b.name
+       haux = b.getTH2F(lumi, AuxName, var, nbinx, xmin, xmax, nbiny, ymin, ymax, cut, options, xlabel, ylabel)
        h.Add(haux)
        del haux
 
