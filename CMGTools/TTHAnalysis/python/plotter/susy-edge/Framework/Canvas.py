@@ -1,4 +1,4 @@
-from ROOT import TCanvas, TLegend, TPad, TLine, TLatex
+from ROOT import TCanvas, TLegend, TPad, TLine, TLatex, TH1F, THStack
 import ROOT as r
 
 class Canvas:
@@ -7,8 +7,10 @@ class Canvas:
    def __init__(self, name, format, x1, y1, x2, y2):
       self.name = name
       self.format = format
-      self.plotNames = [name + "." + i for i in format.split(',')]
+      self.plotName = name + "." + format
       self.myCanvas = TCanvas(name, name)
+      self.ToDraw = []
+      self.orderForLegend = []
       self.histos = []
       self.options = []
       self.labels = []      
@@ -91,17 +93,45 @@ class Canvas:
 
 
  
+   def addHisto(self, h, option, label, labelOption, color, ToDraw, orderForLegend):
 
-   def addHisto(self, h, option, label, labelOption, color):
-      h.SetLineColor(color)
-      h.SetMarkerColor(color)
+      if(color != ""):
+          h.SetLineColor(color)
+          h.SetMarkerColor(color)
+      if(label == ""):
+          label = h.GetTitle()
+
       self.histos.append(h)
       self.options.append(option)
       self.labels.append(label)
       self.labelsOption.append(labelOption)
-      
+      self.ToDraw.append(ToDraw)
+      self.orderForLegend.append(orderForLegend)
 
-   def saveRatio(self, legend, isData, log, lumi, r_ymin=0, r_ymax=2):
+
+   def addStack(self, h, option, ToDraw, orderForLegend):
+
+      legendCounter = orderForLegend
+      if(orderForLegend < len(self.orderForLegend)):
+          legendCounter = len(self.orderForLegend)
+
+      self.addHisto(h, option, "", "", "", ToDraw, -1)  
+      for h_c in h.GetHists():
+          self.addHisto(h_c, "H", h_c.GetTitle(), "F", "", 0, legendCounter)
+          legendCounter = legendCounter + 1
+       
+
+ 
+   def makeLegend(self):
+
+      for i in range(0, len(self.histos)):
+          for j in range(0, len(self.orderForLegend)):
+              if(self.orderForLegend[j] != -1 and self.orderForLegend[j] == i):
+                  self.myLegend.AddEntry(self.histos[j], self.labels[j], self.labelsOption[j])
+          
+
+
+   def saveRatio(self, legend, isData, log, lumi, hdata, hMC):
 
       self.myCanvas.cd()
 
@@ -115,22 +145,22 @@ class Canvas:
 
       pad1.cd()
       if(log):
-        pad1.SetLogy(1)
-      
+          pad1.SetLogy(1)
 
+      for i in range(0, len(self.histos)):
+          if(self.ToDraw[i] != 0):
+              self.histos[i].Draw(self.options[i])
 
-      self.histos[0].Draw(self.options[0])
-      self.myLegend.AddEntry(self.histos[0], self.labels[0], self.labelsOption[0])
-      self.histos[1].Draw(self.options[1])
-      self.myLegend.AddEntry(self.histos[1], self.labels[1], self.labelsOption[1])
-      
       if(legend):
-        self.myLegend.Draw()
-       
-      ratio = self.histos[0].Clone("ratio")
-      ratio.Divide(self.histos[1])
+          self.makeLegend()
+          self.myLegend.Draw()
+
+      
+      ratio = hdata.Clone("ratio")
+      ratio.Divide(hMC)
+
       ratio.SetTitle("")
-      ratio.GetYaxis().SetRangeUser(r_ymin, r_ymax);
+      ratio.GetYaxis().SetRangeUser(0, 2);
       ratio.GetYaxis().SetTitle("Ratio");
       ratio.GetYaxis().CenterTitle();
       ratio.GetYaxis().SetLabelSize(0.12);
@@ -149,13 +179,11 @@ class Canvas:
       line.SetLineColor(r.kRed);
       ratio.Draw();
       line.Draw();
-      ratio.Draw("SAME");
+      ratio.Draw("E1,SAME");
 
-      #r.CMS_lumi(self.myCanvas, 4, 10)
       pad1.cd()
       self.banner(isData, lumi)
-      for plotName in self.plotNames:
-        self.myCanvas.SaveAs(plotName)
+      self.myCanvas.SaveAs(self.plotName)
 
 
 
@@ -164,20 +192,21 @@ class Canvas:
       self.myCanvas.cd()
       
       if(log):
-        self.myCanvas.GetPad(0).SetLogy(1)
-
+          self.myCanvas.GetPad(0).SetLogy(1)
+     
       for i in range(0, len(self.histos)):
-        self.histos[i].Draw(self.options[i])
-        self.myLegend.AddEntry(self.histos[i], self.labels[i], self.labelsOption[i])
+          if(self.ToDraw[i] != 0):        
+              self.histos[i].Draw(self.options[i])
+  
 
       if(legend):
-        self.myLegend.Draw()
+          self.makeLegend()
+          self.myLegend.Draw()
 
       self.banner2(isData, lumi)
-      for plotName in self.plotNames:
-        self.myCanvas.SaveAs(plotName)
+      self.myCanvas.SaveAs(self.plotName)
 
-
+      del self.myCanvas
 
 
 

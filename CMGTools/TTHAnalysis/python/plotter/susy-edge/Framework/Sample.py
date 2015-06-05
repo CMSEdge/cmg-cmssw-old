@@ -1,6 +1,6 @@
 import ROOT as r
 
-from ROOT import TTree, TFile, TCut, TH1F, TH2F
+from ROOT import TTree, TFile, TCut, TH1F, TH2F, THStack, TCanvas
 
 
 class Sample:
@@ -17,7 +17,7 @@ class Sample:
       self.ttree.AddFriend('sf/t',self.ftfile)
       self.count = self.tfile.Get('Count')
       self.lumWeight = 1.0
-      if not self.isData:
+      if(self.isData == 0):
         self.lumWeight = self.xSection / self.count.GetEntries()
 
    def printSample(self):
@@ -61,10 +61,11 @@ class Sample:
 class Block:
    'Common base class for all Sample Blocks'
 
-   def __init__(self, name, color, isdata):
+   def __init__(self, name, label, color, isdata):
       self.name  = name
       self.color = color
       self.isData = isdata
+      self.label = label
       self.samples = []
 
    def printBlock(self):
@@ -97,6 +98,11 @@ class Block:
        haux = s.getTH1F(lumi, AuxName, var, nbin, xmin, xmax, cut, options, xlabel)
        h.Add(haux)
        del haux
+
+
+     h.SetLineColor(self.color)
+     h.SetMarkerColor(self.color)
+     h.SetTitle(self.label)
 
      return h
 
@@ -140,17 +146,18 @@ class Tree:
         block       = splitedLine[0]
         color       = eval(splitedLine[1])
         name        = splitedLine[2]
-        location    = splitedLine[3]
-        flocation   = splitedLine[4]
-        xsection    = float(splitedLine[5])
-        isdata      = int(splitedLine[6])
+        label       = splitedLine[3]
+        location    = splitedLine[4]
+        flocation   = splitedLine[5]
+        xsection    = float(splitedLine[6])
+        isdata      = int(splitedLine[7])
 
         sample = Sample(name, location, flocation, xsection, isdata)
         coincidentBlock = [l for l in self.blocks if l.name == block]
 
         if(coincidentBlock == []):
 
-          newBlock = Block(block, color, isdata)
+          newBlock = Block(block, label, color, isdata)
           newBlock.addSample(sample)
           self.addBlock(newBlock)
 
@@ -178,6 +185,32 @@ class Tree:
       self.blocks.append(b)
 
 
+
+   def getStack(self, lumi, name, var, nbin, xmin, xmax, cut, options, xlabel):
+   
+     hs = THStack(name, "")
+     for b in self.blocks:
+     
+       AuxName = "aux_block_" + name + "_" + b.name
+       haux = b.getTH1F(lumi, AuxName, var, nbin, xmin, xmax, cut, options, xlabel)
+       haux.SetFillColor(b.color)
+       hs.Add(haux)
+       del haux
+
+
+     can_aux = TCanvas("can_aux")
+     can_aux.cd()
+     hs.Draw()
+     del can_aux
+
+     hs.GetXaxis().SetTitle(xlabel)
+     b = int((xmax-xmin)/nbin)
+     ylabel = "Events / " + str(b) + " GeV"
+     hs.GetYaxis().SetTitle(ylabel)
+
+     return hs   
+
+
    def getTH1F(self, lumi, name, var, nbin, xmin, xmax, cut, options, xlabel):
    
      h = TH1F(name, "", nbin, xmin, xmax)
@@ -188,8 +221,7 @@ class Tree:
      h.GetYaxis().SetTitle(ylabel)
      
      for b in self.blocks:
-     
-       AuxName = "aux_block" + b.name
+       AuxName = "aux_block_" + name + "_" + b.name
        haux = b.getTH1F(lumi, AuxName, var, nbin, xmin, xmax, cut, options, xlabel)
        h.Add(haux)
        del haux

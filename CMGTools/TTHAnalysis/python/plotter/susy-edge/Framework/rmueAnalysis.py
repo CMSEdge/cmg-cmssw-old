@@ -29,9 +29,11 @@ def make_rmue(histo_mm, histo_ee):
   ratio.Divide(histo_ee)
   ratio.GetYaxis().SetTitle("r_{#mu e}")
   
-  for i in range(0, ratio.GetNbinsX()):
+  for i in range(0, ratio.GetNbinsX()+1):
       ratio.SetBinContent(i, math.sqrt(ratio.GetBinContent(i)))
-
+      if(histo_ee.GetBinContent(i) != 0):
+          error = math.sqrt((0.25/histo_ee.GetBinContent(i))*(1 + histo_mm.GetBinContent(i)/histo_ee.GetBinContent(i)))
+          ratio.SetBinError(i, error)
   return ratio
 
 
@@ -66,22 +68,22 @@ if __name__ == "__main__":
    
     rmue_mll_central = make_rmue(mll_mm_central, mll_ee_central)
     plot_rmue_mll_central = Canvas("plot_rmue_mll_central", "png", 0.6, 0.6, 0.8, 0.8)
-    plot_rmue_mll_central.addHisto(rmue_mll_central, "E1,SAME", "OF", "L", r.kBlack)
+    plot_rmue_mll_central.addHisto(rmue_mll_central, "E1,SAME", "OF", "L", r.kBlack, 1, 0)
     plot_rmue_mll_central.save(0, 0, 0, 4.0)
     
     rmue_met_central = make_rmue(met_mm_central, met_ee_central)
     plot_rmue_met_central = Canvas("plot_rmue_met_central", "png", 0.6, 0.6, 0.8, 0.8)
-    plot_rmue_met_central.addHisto(rmue_met_central, "E1,SAME", "OF", "L", r.kBlack)
+    plot_rmue_met_central.addHisto(rmue_met_central, "E1,SAME", "OF", "L", r.kBlack, 1, 0)
     plot_rmue_met_central.save(0, 0, 0, 4.0)
     
     rmue_mll_forward = make_rmue(mll_mm_forward, mll_ee_forward)
     plot_rmue_mll_forward = Canvas("plot_rmue_mll_forward", "png", 0.6, 0.6, 0.8, 0.8)
-    plot_rmue_mll_forward.addHisto(rmue_mll_forward, "E1,SAME", "OF", "L", r.kBlack)
+    plot_rmue_mll_forward.addHisto(rmue_mll_forward, "E1,SAME", "OF", "L", r.kBlack, 1, 0)
     plot_rmue_mll_forward.save(0, 0, 0, 4.0)
     
     rmue_met_forward = make_rmue(met_mm_forward, met_ee_forward)
     plot_rmue_met_forward = Canvas("plot_rmue_met_forward", "png", 0.6, 0.6, 0.8, 0.8)
-    plot_rmue_met_forward.addHisto(rmue_met_forward, "E1,SAME", "OF", "L", r.kBlack)
+    plot_rmue_met_forward.addHisto(rmue_met_forward, "E1,SAME", "OF", "L", r.kBlack, 1, 0)
     plot_rmue_met_forward.save(0, 0, 0, 4.0)
     
 
