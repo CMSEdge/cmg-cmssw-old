@@ -32,7 +32,7 @@ class CutManager:
       returncut = ''
       for cut in cutlist:
           returncut += cut
-          if not cutlist.index(cut) == len(cutlist):
+          if not cutlist.index(cut) == len(cutlist)-1:
             returncut += ' && '
       return returncut
   
