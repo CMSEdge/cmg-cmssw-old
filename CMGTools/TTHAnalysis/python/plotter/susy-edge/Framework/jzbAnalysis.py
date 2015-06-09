@@ -27,12 +27,16 @@ def make_jzbDependencies(histo2d, xvar):
     while i+bin_div <= histo2d.GetXaxis().GetNbins():
         tmp_histo = histo2d.ProjectionY('_py'+str(i), i, i+bin_div-1, 'e')
         tmp_histo.Sumw2()
-        # subtract a gaussian from *every* histo
         tmp_histo.Fit('gaus')#,'','', -15., 15)
         ff = tmp_histo.GetFunction('gaus')
 
-        means .append(ff.GetParameter(1))
-        meanes.append(ff.GetParError(1))
+        if ff:
+            means .append(ff.GetParameter(1))
+            meanes.append(ff.GetParError(1))
+        else:
+            means .append(0.)
+            meanes.append(0.)
+
         slicedhistos.append(tmp_histo)
         i+= bin_div
 
@@ -72,17 +76,17 @@ if __name__ == '__main__':
    
     jzb_vs_nvx_proj = make_jzbDependencies(jzb_vs_nvx, 'nvx')
     plot_jzb_vs_nvx_proj = Canvas('plot_jzb_vs_nvx', 'png,pdf', 0.6, 0.6, 0.8, 0.8)
-    plot_jzb_vs_nvx_proj.addHisto(jzb_vs_nvx_proj, 'E1', 'OF', 'L', r.kBlack)
+    plot_jzb_vs_nvx_proj.addHisto(jzb_vs_nvx_proj, 'E1', 'OF', 'L', r.kBlack, 1, 0)
     plot_jzb_vs_nvx_proj.save(0, 0, 0, 4.0)
     
     jzb_vs_zpt_proj = make_jzbDependencies(jzb_vs_zpt, 'zpt')
     plot_jzb_vs_zpt_proj = Canvas('plot_jzb_vs_zpt', 'png,pdf', 0.6, 0.6, 0.8, 0.8)
-    plot_jzb_vs_zpt_proj.addHisto(jzb_vs_zpt_proj, 'E1', 'OF', 'L', r.kBlack)
+    plot_jzb_vs_zpt_proj.addHisto(jzb_vs_zpt_proj, 'E1', 'OF', 'L', r.kBlack, 1, 0)
     plot_jzb_vs_zpt_proj.save(0, 0, 0, 4.0)
     
     jzb_vs_met_proj = make_jzbDependencies(jzb_vs_met, 'met')
     plot_jzb_vs_met_proj = Canvas('plot_jzb_vs_met', 'png,pdf', 0.6, 0.6, 0.8, 0.8)
-    plot_jzb_vs_met_proj.addHisto(jzb_vs_met_proj, 'E1', 'OF', 'L', r.kBlack)
+    plot_jzb_vs_met_proj.addHisto(jzb_vs_met_proj, 'E1', 'OF', 'L', r.kBlack, 1, 0)
     plot_jzb_vs_met_proj.save(0, 0, 0, 4.0)
     
     

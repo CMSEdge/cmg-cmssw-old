@@ -34,7 +34,7 @@ def make_rsfof(histo_sf, histo_of):
     ratio.Fit('myfit')
     
     f = open(ratio.GetName()+'_values.txt', 'w')
-    for i in range(0, ratio.GetNbinsX()+1):
+    for i in range(1, ratio.GetNbinsX()+1):
         min, max = ratio.GetBinLowEdge(i), ratio.GetBinLowEdge(i)+ratio.GetBinWidth(i)
         print    'R_SFOF in [%.2f, %.2f] GeV:\t%.3f +- %.3f'    %(min, max, ratio.GetBinContent(i), ratio.GetBinError(i) )
         f.write( 'R_SFOF in [%.2f, %.2f] GeV:\t%.3f +- %.3f \n' %(min, max, ratio.GetBinContent(i), ratio.GetBinError(i) ) )
@@ -60,7 +60,6 @@ if __name__ == "__main__":
     r.setTDRStyle() 
     cuts = CutManager()
 
-
     mll_sf_central = tree.getTH1F(4, "mll_sf_central", "t.lepsMll_Edge", 20, 20, 250, cuts.Add(cuts.ControlNoMassLeptonSF(), cuts.Central()), "", "m_{ll} (GeV)")
     met_sf_central = tree.getTH1F(4, "met_sf_central", "met_pt"        , 20, 20, 250, cuts.Add(cuts.ControlNoMassLeptonSF(), cuts.Central()), "", "E_{T}^{miss} (GeV)")
     mll_of_central = tree.getTH1F(4, "mll_of_central", "t.lepsMll_Edge", 20, 20, 250, cuts.Add(cuts.ControlNoMassLeptonOF(), cuts.Central()), "", "m_{ll} (GeV)")
@@ -69,12 +68,12 @@ if __name__ == "__main__":
    
     rsfof_mll_central = make_rsfof(mll_sf_central, mll_of_central)
     plot_rsfof_mll_central = Canvas("plot_rsfof_mll_central", "png,pdf", 0.6, 0.6, 0.8, 0.8)
-    plot_rsfof_mll_central.addHisto(rsfof_mll_central, "E1,SAME", "OF", "L", r.kBlack, 0, 1)
+    plot_rsfof_mll_central.addHisto(rsfof_mll_central, "PEZ1", "OF", "L", r.kBlack, 1, 0)
     plot_rsfof_mll_central.save(0, 0, 0, 4.0)
     
     rsfof_met_central = make_rsfof(met_sf_central, met_of_central)
     plot_rsfof_met_central = Canvas("plot_rsfof_met_central", "png,pdf", 0.6, 0.6, 0.8, 0.8)
-    plot_rsfof_met_central.addHisto(rsfof_met_central, "E1,SAME", "OF", "L", r.kBlack, 0 ,1)
+    plot_rsfof_met_central.addHisto(rsfof_met_central, "PEZ1", "OF", "L", r.kBlack, 0 ,1)
     plot_rsfof_met_central.save(0, 0, 0, 4.0)
     
     ## mll_sf_forward = tree.getTH1F(4, "mll_sf_forward", "t.lepsMll_Edge", 20, 20, 250, cuts.Add(cuts.ControlNoMassLeptonSF(), cuts.Forward()), "", "m_{ll} (GeV)")

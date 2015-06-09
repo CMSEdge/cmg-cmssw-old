@@ -68,25 +68,25 @@ if __name__ == "__main__":
     plot_ht_ht.save(0, 0, 0, 4.0)
     
 
-    ## mm_ht   = getTriggerEffs(tree, cuts.AddList([cuts.GoodLeptonmm(),cuts.Central(),'HLT_HT900 > 0']), 'HLT_DoubleMu', 't.htJet35j_Edge' , 'H_{T} (GeV)', [20, 800, 1200], 4.)
-    ## mm_mll  = getTriggerEffs(tree, cuts.AddList([cuts.GoodLeptonmm(),cuts.Central(),'HLT_HT900 > 0', 't.htJet35j_Edge > 850']), 'HLT_DoubleMu', 't.lepsMll_Edge'  , 'm_{ll} (GeV)'       , [20, 0, 200], 4.)
-    ## mm_l1pt = getTriggerEffs(tree, cuts.AddList([cuts.GoodLeptonmm(),cuts.Central(),'HLT_HT900 > 0', 't.htJet35j_Edge > 850']), 'HLT_DoubleMu', 't.Lep_Edge_pt[0]', 'p_{T}^{lead} (GeV)' , [20, 0, 100], 4.)
-    ## mm_l2pt = getTriggerEffs(tree, cuts.AddList([cuts.GoodLeptonmm(),cuts.Central(),'HLT_HT900 > 0', 't.htJet35j_Edge > 850']), 'HLT_DoubleMu', 't.Lep_Edge_pt[1]', 'p_{T}^{trail} (GeV)', [20, 0, 100], 4.)
+    # mm_ht   = getTriggerEffs(tree, cuts.AddList([cuts.GoodLeptonmm(),cuts.Central(),'HLT_HT900 > 0']), 'HLT_DoubleMu', 't.htJet35j_Edge' , 'H_{T} (GeV)', [20, 800, 1200], 4.)
+    mm_mll  = getTriggerEffs(tree, cuts.AddList([cuts.GoodLeptonmm(),cuts.Central(),'HLT_HT900 > 0', 't.htJet35j_Edge > 0']), 'HLT_DoubleMu', 't.lepsMll_Edge'  , 'm_{ll} (GeV)'       , [20, 0, 200], 4.)
+    mm_l1pt = getTriggerEffs(tree, cuts.AddList([cuts.GoodLeptonmm(),cuts.Central(),'HLT_HT900 > 0', 't.htJet35j_Edge > 0']), 'HLT_DoubleMu', 't.Lep_Edge_pt[0]', 'p_{T}^{lead} (GeV)' , [20, 0, 100], 4.)
+    mm_l2pt = getTriggerEffs(tree, cuts.AddList([cuts.GoodLeptonmm(),cuts.Central(),'HLT_HT900 > 0', 't.htJet35j_Edge > 0']), 'HLT_DoubleMu', 't.Lep_Edge_pt[1]', 'p_{T}^{trail} (GeV)', [20, 0, 100], 4.)
 
-    ## 
-    ## plot_mm_mll = Canvas("plot_eff_mm_mll", "png", 0.6, 0.6, 0.8, 0.8)
-    ## mm_mll.GetHistogram().Draw()
-    ## mm_mll.Draw('apz')
-    ## plot_mm_mll.save(0, 0, 0, 4.0)
+    
+    plot_mm_mll = Canvas("plot_eff_mm_mll", "png", 0.6, 0.6, 0.8, 0.8)
+    mm_mll.GetHistogram().Draw()
+    mm_mll.Draw('apz')
+    plot_mm_mll.save(0, 0, 0, 4.0)
 
-    ## plot_mm_l1pt = Canvas("plot_eff_mm_l1pt", "png", 0.6, 0.6, 0.8, 0.8)
-    ## mm_l1pt.GetHistogram().Draw()
-    ## mm_l1pt.Draw('apz')
-    ## plot_mm_l1pt.save(0, 0, 0, 4.0)
+    plot_mm_l1pt = Canvas("plot_eff_mm_l1pt", "png", 0.6, 0.6, 0.8, 0.8)
+    mm_l1pt.GetHistogram().Draw()
+    mm_l1pt.Draw('apz')
+    plot_mm_l1pt.save(0, 0, 0, 4.0)
 
-    ## plot_mm_l2pt = Canvas("plot_eff_mm_l2pt", "png", 0.6, 0.6, 0.8, 0.8)
-    ## mm_l2pt.GetHistogram().Draw()
-    ## mm_l2pt.Draw('apz')
-    ## plot_mm_l2pt.save(0, 0, 0, 4.0)
+    plot_mm_l2pt = Canvas("plot_eff_mm_l2pt", "png", 0.6, 0.6, 0.8, 0.8)
+    mm_l2pt.GetHistogram().Draw()
+    mm_l2pt.Draw('apz')
+    plot_mm_l2pt.save(0, 0, 0, 4.0)
 
 
