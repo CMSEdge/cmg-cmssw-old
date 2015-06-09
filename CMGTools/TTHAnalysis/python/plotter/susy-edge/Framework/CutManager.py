@@ -29,16 +29,18 @@ class CutManager:
 
 
    def AddList(self, cutlist):
-      returncut = ''
+      returncut = '('
       for cut in cutlist:
           returncut += cut
           if not cutlist.index(cut) == len(cutlist)-1:
             returncut += ' && '
+          else:
+            returncut += ')'
       return returncut
   
    def Add(self, cut1, cut2):
 
-      return cut1 + " && " + cut2  
+      return '('+ cut1 + " && " + cut2 + ')'
   
    def Central(self):
       
