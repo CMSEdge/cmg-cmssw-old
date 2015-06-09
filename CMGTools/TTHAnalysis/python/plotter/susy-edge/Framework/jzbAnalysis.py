@@ -34,6 +34,9 @@ def make_jzbDependencies(histo2d, xvar):
             means .append(ff.GetParameter(1))
             meanes.append(ff.GetParError(1))
         else:
+            print '==========================================='
+            print 'ATTENTION FIT DID NOT CONVERGE OR SOMETHING'
+            print '==========================================='
             means .append(0.)
             meanes.append(0.)
 
