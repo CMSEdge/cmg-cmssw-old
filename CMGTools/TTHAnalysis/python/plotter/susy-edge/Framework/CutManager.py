@@ -28,6 +28,14 @@ class CutManager:
       self.forward = "(abs(t.Lep_Edge_eta[0])>1.4 || abs(t.Lep_Edge_eta[1])>1.4)"
 
 
+   def AddList(self, cutlist):
+      returncut = ''
+      for cut in cutlist:
+          returncut += cut
+          if not cutlist.index(cut) == len(cutlist):
+            returncut += ' && '
+      return returncut
+  
    def Add(self, cut1, cut2):
 
       return cut1 + " && " + cut2  

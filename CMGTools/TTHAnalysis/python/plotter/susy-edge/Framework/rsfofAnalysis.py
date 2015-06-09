@@ -68,13 +68,13 @@ if __name__ == "__main__":
 
    
     rsfof_mll_central = make_rsfof(mll_sf_central, mll_of_central)
-    plot_rsfof_mll_central = Canvas("plot_rsfof_mll_central", "png", 0.6, 0.6, 0.8, 0.8)
-    plot_rsfof_mll_central.addHisto(rsfof_mll_central, "E1,SAME", "OF", "L", r.kBlack)
+    plot_rsfof_mll_central = Canvas("plot_rsfof_mll_central", "png,pdf", 0.6, 0.6, 0.8, 0.8)
+    plot_rsfof_mll_central.addHisto(rsfof_mll_central, "E1,SAME", "OF", "L", r.kBlack, 0, 1)
     plot_rsfof_mll_central.save(0, 0, 0, 4.0)
     
     rsfof_met_central = make_rsfof(met_sf_central, met_of_central)
-    plot_rsfof_met_central = Canvas("plot_rsfof_met_central", "png", 0.6, 0.6, 0.8, 0.8)
-    plot_rsfof_met_central.addHisto(rsfof_met_central, "E1,SAME", "OF", "L", r.kBlack)
+    plot_rsfof_met_central = Canvas("plot_rsfof_met_central", "png,pdf", 0.6, 0.6, 0.8, 0.8)
+    plot_rsfof_met_central.addHisto(rsfof_met_central, "E1,SAME", "OF", "L", r.kBlack, 0 ,1)
     plot_rsfof_met_central.save(0, 0, 0, 4.0)
     
     ## mll_sf_forward = tree.getTH1F(4, "mll_sf_forward", "t.lepsMll_Edge", 20, 20, 250, cuts.Add(cuts.ControlNoMassLeptonSF(), cuts.Forward()), "", "m_{ll} (GeV)")
