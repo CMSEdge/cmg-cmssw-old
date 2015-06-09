@@ -28,8 +28,8 @@ from Canvas import Canvas
 def getTriggerEffs(tree, cut, addCut, var, varname, binning, lumi):
 
 
-    passHisto = tree.getTH1F(lumi, "passHisto", var, binning[0], binning[1], binning[2], cut+'&&'+addCut, '', varname)
-    allHisto  = tree.getTH1F(lumi, "allHisto",  var, binning[0], binning[1], binning[2], cut            , '', varname)
+    passHisto = tree.getTH1F(lumi, "passHisto", var, binning[0], binning[1], binning[2], cut[:-1]+'&&'+addCut+')', '', varname)
+    allHisto  = tree.getTH1F(lumi, "allHisto",  var, binning[0], binning[1], binning[2], cut                     , '', varname)
 
     for i in range(1,passHisto.GetNbinsX()+1):
         print 'at variable %s events passing/total %.2f  of  %.2f' %(varname, passHisto.GetBinContent(i), allHisto.GetBinContent(i) )
@@ -54,13 +54,6 @@ if __name__ == "__main__":
 
     inputFileName = args[0]
     tree = Tree(inputFileName, "MC", 0)
-    print 'tree.blocks', tree.blocks
-    for block in tree.blocks:
-        block.printBlock()
-        for sample in block.samples:
-            sample.printSample()
-            print 'type of sample isdata', type(sample.isData)
-    print 'tree.isData', tree.isData
    
     gROOT.ProcessLine('.L tdrstyle.C')
     ## gROOT.SetBatch(1)
