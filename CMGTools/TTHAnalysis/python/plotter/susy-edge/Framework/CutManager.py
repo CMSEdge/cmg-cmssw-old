@@ -27,180 +27,180 @@ class CutManager:
       self.central = "(abs(t.Lep_Edge_eta[0])<1.4 && abs(t.Lep_Edge_eta[1])<1.4)"
       self.forward = "(abs(t.Lep_Edge_eta[0])>1.4 || abs(t.Lep_Edge_eta[1])>1.4)"
 
+   def brackets(self, cut):
+      return '('+cut+')'
 
    def AddList(self, cutlist):
-      returncut = '('
+      returncut = ''
       for cut in cutlist:
           returncut += cut
           if not cutlist.index(cut) == len(cutlist)-1:
             returncut += ' && '
-          else:
-            returncut += ')'
-      return returncut
+      return self.brackets(returncut)
   
    def Add(self, cut1, cut2):
 
-      return '('+ cut1 + " && " + cut2 + ')'
+      return self.brackets(cut1 + " && " + cut2 )
   
    def Central(self):
       
-      return self.central
+      return self.brackets(self.central)
  
    def Forward(self):
       
-      return self.forward
+      return self.brackets(self.forward)
  
    def GoodLeptonSF(self):
 
-      return self.goodLepton + " && " + self.SF
+      return self.brackets(self.goodLepton + " && " + self.SF)
 
    def GoodLeptonOF(self):
 
-      return self.goodLepton + " && " + self.OF
+      return self.brackets(self.goodLepton + " && " + self.OF)
 
    def GoodLeptonee(self):
 
-      return self.goodLepton + " && " + self.ee
+      return self.brackets(self.goodLepton + " && " + self.ee)
 
    def GoodLeptonmm(self):
 
-      return self.goodLepton + " && " + self.mm
+      return self.brackets(self.goodLepton + " && " + self.mm)
 
    def SignalNoMassLeptonSF(self):
 
-      return self.GoodLeptonSF() + " && " + self.METJetsSignalRegion
+      return self.brackets(self.GoodLeptonSF() + " && " + self.METJetsSignalRegion)
    
    def SignalNoMassLeptonOF(self):
 
-      return self.GoodLeptonOF() + " && " + self.METJetsSignalRegion
+      return self.brackets(self.GoodLeptonOF() + " && " + self.METJetsSignalRegion)
    
    def SignalNoMassLeptonee(self):
 
-      return self.GoodLeptonee() + " && " + self.METJetsSignalRegion
+      return self.brackets(self.GoodLeptonee() + " && " + self.METJetsSignalRegion)
 
    def SignalNoMassLeptonmm(self):
 
-      return self.GoodLeptonmm() + " && " + self.METJetsSignalRegion
+      return self.brackets(self.GoodLeptonmm() + " && " + self.METJetsSignalRegion)
 
    def ControlNoMassLeptonSF(self):
 
-      return self.GoodLeptonSF() + " && " + self.METJetsControlRegion
+      return self.brackets(self.GoodLeptonSF() + " && " + self.METJetsControlRegion)
    
    def ControlNoMassLeptonOF(self):
 
-      return self.GoodLeptonOF() + " && " + self.METJetsControlRegion
+      return self.brackets(self.GoodLeptonOF() + " && " + self.METJetsControlRegion)
    
    def ControlNoMassLeptonee(self):
 
-      return self.GoodLeptonee() + " && " + self.METJetsControlRegion
+      return self.brackets(self.GoodLeptonee() + " && " + self.METJetsControlRegion)
 
    def ControlNoMassLeptonmm(self):
 
-      return self.GoodLeptonmm() + " && " + self.METJetsControlRegion
+      return self.brackets(self.GoodLeptonmm() + " && " + self.METJetsControlRegion)
 
    def DYControlNoMassLeptonSF(self):
 
-      return self.GoodLeptonSF() + " && " + self.DYControlRegion
+      return self.brackets(self.GoodLeptonSF() + " && " + self.DYControlRegion)
    
    def DYControlNoMassLeptonOF(self):
 
-      return self.GoodLeptonOF() + " && " + self.DYControlRegion
+      return self.brackets(self.GoodLeptonOF() + " && " + self.DYControlRegion)
    
    def DYControlNoMassLeptonee(self):
 
-      return self.GoodLeptonee() + " && " + self.DYControlRegion
+      return self.brackets(self.GoodLeptonee() + " && " + self.DYControlRegion)
 
    def DYControlNoMassLeptonmm(self):
 
-      return self.GoodLeptonmm() + " && " + self.DYControlRegion
+      return self.brackets(self.GoodLeptonmm() + " && " + self.DYControlRegion)
 
    def SignalLowMassSF(self):
 
-      return self.SignalNoMassLeptonSF() + " && " + self.lowmass
+      return self.brackets(self.SignalNoMassLeptonSF() + " && " + self.lowmass)
    
    def SignalLowMassOF(self):
 
-      return self.SignalNoMassLeptonOF() + " && " + self.lowmass
+      return self.brackets(self.SignalNoMassLeptonOF() + " && " + self.lowmass)
    
    def SignalLowMassee(self):
 
-      return self.SignalNoMassLeptonee() + " && " + self.lowmass
+      return self.brackets(self.SignalNoMassLeptonee() + " && " + self.lowmass)
    
    def SignalLowMassmm(self):
 
-      return self.SignalNoMassLeptonmm() + " && " + self.lowmass
+      return self.brackets(self.SignalNoMassLeptonmm() + " && " + self.lowmass)
 
    def SignalZMassSF(self):
 
-      return self.SignalZMassLeptonSF() + " && " + self.Zmass
+      return self.brackets(self.SignalZMassLeptonSF() + " && " + self.Zmass)
    
    def SignalZMassOF(self):
 
-      return self.SignalZMassLeptonOF() + " && " + self.Zmass
+      return self.brackets(self.SignalZMassLeptonOF() + " && " + self.Zmass)
    
    def SignalZMassee(self):
 
-      return self.SignalZMassLeptonee() + " && " + self.Zmass
+      return self.brackets(self.SignalZMassLeptonee() + " && " + self.Zmass)
    
    def SignalZMassmm(self):
 
-      return self.SignalNoMassLeptonmm() + " && " + self.Zmass
+      return self.brackets(self.SignalNoMassLeptonmm() + " && " + self.Zmass)
 
    def SignalHighMassSF(self):
 
-      return self.SignalNoMassLeptonSF() + " && " + self.highmass
+      return self.brackets(self.SignalNoMassLeptonSF() + " && " + self.highmass)
    
    def SignalHighMassOF(self):
 
-      return self.SignalNoMassLeptonOF() + " && " + self.highmass
+      return self.brackets(self.SignalNoMassLeptonOF() + " && " + self.highmass)
    
    def SignalHighMassee(self):
 
-      return self.SignalNoMassLeptonee() + " && " + self.highmass
+      return self.brackets(self.SignalNoMassLeptonee() + " && " + self.highmass)
  
    def ControlLowMassSF(self):
 
-      return self.ControlNoMassLeptonSF() + " && " + self.lowmass
+      return self.brackets(self.ControlNoMassLeptonSF() + " && " + self.lowmass)
    
    def ControlLowMassOF(self):
 
-      return self.ControlNoMassLeptonOF() + " && " + self.lowmass
+      return self.brackets(self.ControlNoMassLeptonOF() + " && " + self.lowmass)
    
    def ControlLowMassee(self):
 
-      return self.ControlNoMassLeptonee() + " && " + self.lowmass
+      return self.brackets(self.ControlNoMassLeptonee() + " && " + self.lowmass)
    
    def ControlLowMassmm(self):
 
-      return self.ControlNoMassLeptonmm() + " && " + self.lowmass
+      return self.brackets(self.ControlNoMassLeptonmm() + " && " + self.lowmass)
 
    def ControlZMassSF(self):
 
-      return self.ControlZMassLeptonSF() + " && " + self.Zmass
+      return self.brackets(self.ControlZMassLeptonSF() + " && " + self.Zmass)
    
    def ControlZMassOF(self):
 
-      return self.ControlZMassLeptonOF() + " && " + self.Zmass
+      return self.brackets(self.ControlZMassLeptonOF() + " && " + self.Zmass)
    
    def ControlZMassee(self):
 
-      return self.ControlZMassLeptonee() + " && " + self.Zmass
+      return self.brackets(self.ControlZMassLeptonee() + " && " + self.Zmass)
    
    def ControlZMassmm(self):
 
-      return self.ControlNoMassLeptonmm() + " && " + self.Zmass
+      return self.brackets(self.ControlNoMassLeptonmm() + " && " + self.Zmass)
 
    def ControlHighMassSF(self):
 
-      return self.ControlNoMassLeptonSF() + " && " + self.highmass
+      return self.brackets(self.ControlNoMassLeptonSF() + " && " + self.highmass)
    
    def ControlHighMassOF(self):
 
-      return self.ControlNoMassLeptonOF() + " && " + self.highmass
+      return self.brackets(self.ControlNoMassLeptonOF() + " && " + self.highmass)
    
    def ControlHighMassee(self):
 
-      return self.ControlNoMassLeptonee() + " && " + self.highmass
+      return self.brackets(self.ControlNoMassLeptonee() + " && " + self.highmass)
    
    
 
