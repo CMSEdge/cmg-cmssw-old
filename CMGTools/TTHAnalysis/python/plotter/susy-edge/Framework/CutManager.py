@@ -20,7 +20,8 @@ class CutManager:
       self.SF = "(" + self.ee + " || " +  self.mm + ")"
       self.METJetsSignalRegion = "((met_pt > 150 && t.nJetSel_Edge > 1) || (met_pt > 100 && t.nJetSel_Edge > 2))"
       self.METJetsControlRegion = "(met_pt > 100 && met_pt < 150 && t.nJetSel_Edge == 2)"
-      self.DYControlRegion = "(met_pt < 50 && t.nJetSel_Edge == 2)"
+      self.DYControlRegion = "(met_pt < 50 && t.nJetSel_Edge >= 2)"
+      self.DYmass = "t.lepsMll_Edge > 60 && t.lepsMll_Edge < 120"
       self.lowmass = "t.lepsMll_Edge > 20 && t.lepsMll_Edge < 70"
       self.Zmass = "t.lepsMll_Edge > 81 && t.lepsMll_Edge < 101"
       self.highmass = "t.lepsMll_Edge > 120"
@@ -49,6 +50,10 @@ class CutManager:
    def Forward(self):
       
       return self.brackets(self.forward)
+
+   def DYMass(self):
+ 
+      return self.brackets(self.DYmass)
  
    def GoodLeptonSF(self):
 
@@ -132,15 +137,15 @@ class CutManager:
 
    def SignalZMassSF(self):
 
-      return self.brackets(self.SignalZMassLeptonSF() + " && " + self.Zmass)
+      return self.brackets(self.SignalNoMassLeptonSF() + " && " + self.Zmass)
    
    def SignalZMassOF(self):
 
-      return self.brackets(self.SignalZMassLeptonOF() + " && " + self.Zmass)
+      return self.brackets(self.SignalNoMassLeptonOF() + " && " + self.Zmass)
    
    def SignalZMassee(self):
 
-      return self.brackets(self.SignalZMassLeptonee() + " && " + self.Zmass)
+      return self.brackets(self.SignalNoMassLeptonee() + " && " + self.Zmass)
    
    def SignalZMassmm(self):
 
@@ -157,6 +162,10 @@ class CutManager:
    def SignalHighMassee(self):
 
       return self.brackets(self.SignalNoMassLeptonee() + " && " + self.highmass)
+   
+   def SignalHighMassmm(self):
+
+      return self.brackets(self.SignalNoMassLeptonmm() + " && " + self.highmass)
  
    def ControlLowMassSF(self):
 

@@ -1,4 +1,4 @@
-from ROOT import TCanvas, TLegend, TPad, TLine, TLatex, TH1F, THStack
+from ROOT import TCanvas, TLegend, TPad, TLine, TLatex, TH1F, THStack, TGraphErrors
 import ROOT as r
 
 class Canvas:
@@ -94,6 +94,21 @@ class Canvas:
 
  
    def addHisto(self, h, option, label, labelOption, color, ToDraw, orderForLegend):
+
+      if(color != ""):
+          h.SetLineColor(color)
+          h.SetMarkerColor(color)
+      if(label == ""):
+          label = h.GetTitle()
+
+      self.histos.append(h)
+      self.options.append(option)
+      self.labels.append(label)
+      self.labelsOption.append(labelOption)
+      self.ToDraw.append(ToDraw)
+      self.orderForLegend.append(orderForLegend)
+
+   def addGraph(self, h, option, label, labelOption, color, ToDraw, orderForLegend):
 
       if(color != ""):
           h.SetLineColor(color)
