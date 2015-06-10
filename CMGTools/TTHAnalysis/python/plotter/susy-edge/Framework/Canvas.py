@@ -1,4 +1,4 @@
-from ROOT import TCanvas, TLegend, TPad, TLine, TLatex, TH1F, THStack
+from ROOT import TCanvas, TLegend, TPad, TLine, TLatex, TH1F, THStack, TLine
 import ROOT as r
 
 class Canvas:
@@ -12,6 +12,7 @@ class Canvas:
       self.ToDraw = []
       self.orderForLegend = []
       self.histos = []
+      self.lines = []
       self.options = []
       self.labels = []      
       self.labelsOption = []
@@ -91,6 +92,10 @@ class Canvas:
       latexc.SetTextSize(0.04);
       latexc.DrawLatex(0.82, 0.93, text_lumi)
 
+   def addLine(self, x1, y1, x2, y2, color):
+      line = TLine(x1,y1,x2,y2)
+      line.SetLineColor(color)
+      self.lines.append(line)
 
  
    def addHisto(self, h, option, label, labelOption, color, ToDraw, orderForLegend):
@@ -198,6 +203,9 @@ class Canvas:
       for i in range(0, len(self.histos)):
           if(self.ToDraw[i] != 0):        
               self.histos[i].Draw(self.options[i])
+
+      for line in self.lines:
+          line.Draw()
   
 
       if(legend):
