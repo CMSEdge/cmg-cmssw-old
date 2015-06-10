@@ -79,10 +79,14 @@ if __name__ == '__main__':
     cuts = CutManager()
 
 
-    jzb_vs_nvx  = tree.getTH2F(4, 'jzb_vs_nvx', 't.lepsJZB_Edge:nVert'         , 10, 0,  30., 20, -100., 100., cuts.Add(cuts.DYControlNoMassLeptonSF(), cuts.Central()), '', 'n_{vertices}', 'JZB')
-    jzb_vs_zpt  = tree.getTH2F(4, 'jzb_vs_zpt', 't.lepsJZB_Edge:t.lepsZPt_Edge', 20, 0, 150., 20, -100., 100., cuts.Add(cuts.DYControlNoMassLeptonSF(), cuts.Central()), '', 'p_{T}(Z)'    , 'JZB')
-    jzb_vs_met  = tree.getTH2F(4, 'jzb_vs_met', 't.lepsJZB_Edge:met_pt'        ,  5, 0,  50., 20, -100., 100., cuts.Add(cuts.DYControlNoMassLeptonSF(), cuts.Central()), '', 'MET'         , 'JZB')
+    jzb_vs_nvx  = tree.getTH2F(4, 'jzb_vs_nvx', 't.lepsJZB_Edge:nVert'         , 10, 0.,  30., 20, -100., 100., cuts.Add(cuts.DYControlNoMassLeptonSF(), cuts.Central()), '', 'n_{vertices}', 'JZB')
+    jzb_vs_met  = tree.getTH2F(4, 'jzb_vs_met', 't.lepsJZB_Edge:met_pt'        ,  5, 0.,  50., 20, -100., 100., cuts.Add(cuts.DYControlNoMassLeptonSF(), cuts.Central()), '', 'MET'         , 'JZB')
+    jzb_vs_mll  = tree.getTH2F(4, 'jzb_vs_mll', 't.lepsJZB_Edge:t.lepsMll_Edge', 20,80., 100., 20, -100., 100., cuts.Add(cuts.DYControlNoMassLeptonSF(), cuts.Central()), '', 'm_{ll}'      , 'JZB')
     jzb_vs_spt  = tree.getTH2F(4, 'jzb_vs_spt', 't.lepsJZB_Edge:(t.Lep_Edge_pt[0]+t.Lep_Edge_pt[1])' ,  20, 0, 200., 20, -100., 100., cuts.Add(cuts.DYControlNoMassLeptonSF(), cuts.Central()), '', 'sum lepton pT'         , 'JZB')
+
+    jzb_vs_zpt  = tree.getTH2F(4, 'jzb_vs_zpt', 't.lepsJZB_Edge:t.lepsZPt_Edge', 15, 0., 150., 20, -100., 100., cuts.Add(cuts.DYControlNoMassLeptonSF(), cuts.Central()), '', 'p_{T}(Z)'    , 'JZB')
+    jzb_vs_zpt_mm  = tree.getTH2F(4, 'jzb_vs_zpt_mm', 't.lepsJZB_Edge:t.lepsZPt_Edge', 15, 0., 150., 20, -100., 100., cuts.Add(cuts.DYControlNoMassLeptonmm(), cuts.Central()), '', 'p_{T}(Z) (#mu#mu)'    , 'JZB')
+    jzb_vs_zpt_ee  = tree.getTH2F(4, 'jzb_vs_zpt_ee', 't.lepsJZB_Edge:t.lepsZPt_Edge', 15, 0., 150., 20, -100., 100., cuts.Add(cuts.DYControlNoMassLeptonee(), cuts.Central()), '', 'p_{T}(Z) (ee)'    , 'JZB')
 
    
     jzb_vs_nvx_proj = make_jzbDependencies(jzb_vs_nvx, 'nvx')
@@ -97,11 +101,29 @@ if __name__ == '__main__':
     plot_jzb_vs_zpt_proj.addLine(jzb_vs_zpt_proj.GetXaxis().GetXmin(), 0., jzb_vs_zpt_proj.GetXaxis().GetXmax(),0., 3)
     plot_jzb_vs_zpt_proj.save(0, 0, 0, 4.0)
     
+    jzb_vs_zpt_mm_proj = make_jzbDependencies(jzb_vs_zpt_mm, 'zpt_mm')
+    plot_jzb_vs_zpt_mm_proj = Canvas('plot_jzb_vs_zpt_mm', 'png,pdf', 0.6, 0.6, 0.8, 0.8)
+    plot_jzb_vs_zpt_mm_proj.addHisto(jzb_vs_zpt_mm_proj, 'E1', 'OF', 'L', r.kBlack, 1, 0)
+    plot_jzb_vs_zpt_mm_proj.addLine(jzb_vs_zpt_mm_proj.GetXaxis().GetXmin(), 0., jzb_vs_zpt_mm_proj.GetXaxis().GetXmax(),0., 3)
+    plot_jzb_vs_zpt_mm_proj.save(0, 0, 0, 4.0)
+    
+    jzb_vs_zpt_ee_proj = make_jzbDependencies(jzb_vs_zpt_ee, 'zpt_ee')
+    plot_jzb_vs_zpt_ee_proj = Canvas('plot_jzb_vs_zpt_ee', 'png,pdf', 0.6, 0.6, 0.8, 0.8)
+    plot_jzb_vs_zpt_ee_proj.addHisto(jzb_vs_zpt_ee_proj, 'E1', 'OF', 'L', r.kBlack, 1, 0)
+    plot_jzb_vs_zpt_ee_proj.addLine(jzb_vs_zpt_ee_proj.GetXaxis().GetXmin(), 0., jzb_vs_zpt_ee_proj.GetXaxis().GetXmax(),0., 3)
+    plot_jzb_vs_zpt_ee_proj.save(0, 0, 0, 4.0)
+    
     jzb_vs_met_proj = make_jzbDependencies(jzb_vs_met, 'met')
     plot_jzb_vs_met_proj = Canvas('plot_jzb_vs_met', 'png,pdf', 0.6, 0.6, 0.8, 0.8)
     plot_jzb_vs_met_proj.addHisto(jzb_vs_met_proj, 'E1', 'OF', 'L', r.kBlack, 1, 0)
     plot_jzb_vs_met_proj.addLine(jzb_vs_met_proj.GetXaxis().GetXmin(), 0., jzb_vs_met_proj.GetXaxis().GetXmax(),0., 3)
     plot_jzb_vs_met_proj.save(0, 0, 0, 4.0)
+    
+    jzb_vs_mll_proj = make_jzbDependencies(jzb_vs_mll, 'mll')
+    plot_jzb_vs_mll_proj = Canvas('plot_jzb_vs_mll', 'png,pdf', 0.6, 0.6, 0.8, 0.8)
+    plot_jzb_vs_mll_proj.addHisto(jzb_vs_mll_proj, 'E1', 'OF', 'L', r.kBlack, 1, 0)
+    plot_jzb_vs_mll_proj.addLine(jzb_vs_mll_proj.GetXaxis().GetXmin(), 0., jzb_vs_mll_proj.GetXaxis().GetXmax(),0., 3)
+    plot_jzb_vs_mll_proj.save(0, 0, 0, 4.0)
     
     jzb_vs_spt_proj = make_jzbDependencies(jzb_vs_spt, 'spt')
     plot_jzb_vs_spt_proj = Canvas('plot_jzb_vs_spt', 'png,pdf', 0.6, 0.6, 0.8, 0.8)
@@ -110,7 +132,4 @@ if __name__ == '__main__':
     plot_jzb_vs_spt_proj.save(0, 0, 0, 4.0)
     
     
-
-
-
 
