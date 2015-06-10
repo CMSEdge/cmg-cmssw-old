@@ -6,6 +6,9 @@ class CutManager:
    def __init__(self):
 
       self.twoLeptons = "t.nPairLep_Edge > 0"
+      self.trigMMc = "HLT_DoubleMu > 0"
+      self.trigEEc = "HLT_DoubleEl > 0"
+      self.trigEMc = "HLT_DoubleEMu > 0"
       self.leptonPt = "t.Lep_Edge_pt[0] > 25. && t.Lep_Edge_pt[1] > 20."
       self.leptonDR = "t.lepsDR_Edge > 0.3"       
       self.ECALCrack = "abs(abs(Lep_Edge_eta[0]) - 1.5) > 0.1 && abs(abs(Lep_Edge_eta[1]) - 1.5) > 0.1"
@@ -14,8 +17,8 @@ class CutManager:
       ## self.leptonID = "LepGood_tightId[0] > 0 && LepGood_tightId[1] > 0"
       ## self.goodLepton = self.twoLeptons + " && " + self.leptonPt + " && " + self.leptonEta + " && " + self.ECALCrack  + " && " + self.leptonDR + " && " + self.leptonID
       self.goodLepton = self.twoLeptons + "&&" + self.leptonPt + "&&" + self.leptonDR + "&&" + self.ECALCrack + "&&" + self.leptonsMll
-      self.ee = "Lep_Edge_pdgId[0] * Lep_Edge_pdgId[1] == -121"
-      self.mm = "Lep_Edge_pdgId[0] * Lep_Edge_pdgId[1] == -169"
+      self.ee = "(Lep_Edge_pdgId[0] * Lep_Edge_pdgId[1] == -121) && HLT_DoubleEl > 0"
+      self.mm = "(Lep_Edge_pdgId[0] * Lep_Edge_pdgId[1] == -169) && HLT_DoubleMu > 0"
       self.OF = "Lep_Edge_pdgId[0] * Lep_Edge_pdgId[1] == -143"
       self.SF = "(" + self.ee + " || " +  self.mm + ")"
       self.METJetsSignalRegion = "((met_pt > 150 && t.nJetSel_Edge > 1) || (met_pt > 100 && t.nJetSel_Edge > 2))"
@@ -46,6 +49,18 @@ class CutManager:
    def Central(self):
       
       return self.brackets(self.central)
+
+   def trigMM(self):
+
+      return self.brackets(self.trigMMc)
+ 
+   def trigEE(self):
+
+      return self.brackets(self.trigEEc)
+ 
+   def trigEM(self):
+
+      return self.brackets(self.trigEMc)
  
    def Forward(self):
       

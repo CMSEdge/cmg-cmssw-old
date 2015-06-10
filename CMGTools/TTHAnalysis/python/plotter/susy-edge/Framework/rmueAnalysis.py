@@ -62,20 +62,28 @@ def make_rmue_signal(ee_l, mm_l, ee_Z, mm_Z, ee_h, mm_h):
     rmue_y = array("d", [rmue_l[0], rmue_Z[0], rmue_h[0]])
     rmue_ey = array("d", [rmue_l[1], rmue_Z[1], rmue_h[1]])
     
+    print "r_mue in low mass signal region " + str(rmue_l[0]) + " +/- " + str(rmue_l[1])
+    print "r_mue in onZ mass signal region " + str(rmue_Z[0]) + " +/- " + str(rmue_Z[1])
+    print "r_mue in high mass signal region " + str(rmue_h[0]) + " +/- " + str(rmue_h[1])
+
     gr = TGraphErrors(3, rmue_x, rmue_y, rmue_ex, rmue_ey)
     gr.GetYaxis().SetTitle("r_{#mu e}")
     gr.GetXaxis().SetTitle("m_{ll} [GeV]")
 
     return gr
 
-def make_rmue_meas(ee, mm):
+def make_rmue_meas(ee, mm, syst):
 
     rmue_m = rmue(mm[0], ee[0], mm[1], ee[1])
 
     rmue_x = array("d", [(300+50)/2.0])
     rmue_ex = array("d", [125])
     rmue_y = array("d", [rmue_m[0]])
-    rmue_ey = array("d", [rmue_m[1]])
+    error = math.sqrt(rmue_m[1]*rmue_m[1] + (syst*rmue_m[0])*(syst*rmue_m[0]))
+    rmue_ey = array("d", [error])
+    
+    print "r_mue in DY region (mean) " + str(rmue_m[0]) + " +/- " + str(rmue_m[1]) + " +/- " + str(syst*rmue_m[0]) 
+
     
     gr = TGraphErrors(1, rmue_x, rmue_y, rmue_ex, rmue_ey)
     gr.GetYaxis().SetTitle("r_{#mu e}")
@@ -128,43 +136,68 @@ if __name__ == "__main__":
     mll_ee_forward_DYmeas = tree.getYields(4, "t.lepsMll_Edge", 50, 1000, cuts.AddList([cuts.SignalZMassee(), cuts.Forward(), cuts.DYMass()]))
     mll_mm_forward_DYmeas = tree.getYields(4, "t.lepsMll_Edge", 50, 1000, cuts.AddList([cuts.SignalZMassmm(), cuts.Forward(), cuts.DYMass()]))
 
-   
+
     rmue_mll_central = make_rmue(mll_mm_central, mll_ee_central)
+    rmue_mll_central.GetYaxis().SetRangeUser(0, 2)
     plot_rmue_mll_central = Canvas("plot_rmue_mll_central", "png", 0.6, 0.6, 0.8, 0.8)
     plot_rmue_mll_central.addHisto(rmue_mll_central, "E1,SAME", "DY", "L", r.kBlack, 1, 0)
     plot_rmue_mll_central.save(0, 0, 0, 4.0)
     
     rmue_met_central = make_rmue(met_mm_central, met_ee_central)
+    rmue_met_central.GetYaxis().SetRangeUser(0, 2)
     plot_rmue_met_central = Canvas("plot_rmue_met_central", "png", 0.6, 0.6, 0.8, 0.8)
     plot_rmue_met_central.addHisto(rmue_met_central, "E1,SAME", "DY", "L", r.kBlack, 1, 0)
     plot_rmue_met_central.save(0, 0, 0, 4.0)
     
     rmue_mll_forward = make_rmue(mll_mm_forward, mll_ee_forward)
+    rmue_mll_forward.GetYaxis().SetRangeUser(0, 2)
     plot_rmue_mll_forward = Canvas("plot_rmue_mll_forward", "png", 0.6, 0.6, 0.8, 0.8)
     plot_rmue_mll_forward.addHisto(rmue_mll_forward, "E1,SAME", "DY", "L", r.kBlack, 1, 0)
     plot_rmue_mll_forward.save(0, 0, 0, 4.0)
     
     rmue_met_forward = make_rmue(met_mm_forward, met_ee_forward)
+    rmue_met_forward.GetYaxis().SetRangeUser(0, 2)
     plot_rmue_met_forward = Canvas("plot_rmue_met_forward", "png", 0.6, 0.6, 0.8, 0.8)
     plot_rmue_met_forward.addHisto(rmue_met_forward, "E1,SAME", "DY", "L", r.kBlack, 1, 0)
     plot_rmue_met_forward.save(0, 0, 0, 4.0)
     
     rmue_central_signal = make_rmue_signal(mll_ee_central_lowmass, mll_mm_central_lowmass, mll_ee_central_Zmass, mll_mm_central_Zmass, mll_ee_central_highmass, mll_mm_central_highmass)
+    rmue_central_signal.GetYaxis().SetRangeUser(0, 2)
+    rmue_central_signal.SetMarkerSize(0)
     rmue_forward_signal = make_rmue_signal(mll_ee_forward_lowmass, mll_mm_forward_lowmass, mll_ee_forward_Zmass, mll_mm_forward_Zmass, mll_ee_forward_highmass, mll_mm_forward_highmass)
+    rmue_forward_signal.GetYaxis().SetRangeUser(0, 2)
+    rmue_forward_signal.SetMarkerSize(0)
     
-    rmue_central_meas = make_rmue_meas(mll_ee_central_DYmeas, mll_mm_central_DYmeas)
-    rmue_forward_meas = make_rmue_meas(mll_ee_forward_DYmeas, mll_mm_forward_DYmeas)
+    rmue_central_meas = make_rmue_meas(mll_ee_central_DYmeas, mll_mm_central_DYmeas, 0.1)
+    rmue_central_meas.GetYaxis().SetRangeUser(0, 2)
+    rmue_central_meas.GetXaxis().SetRangeUser(50, 300)
+    rmue_central_meas.SetMarkerSize(0)
+    rmue_central_meas.SetFillColor(r.kBlue-9)
+    rmue_forward_meas = make_rmue_meas(mll_ee_forward_DYmeas, mll_mm_forward_DYmeas, 0.2)
+    rmue_forward_meas.GetYaxis().SetRangeUser(0, 2)
+    rmue_forward_meas.GetXaxis().SetRangeUser(50, 300)
+    rmue_forward_meas.SetMarkerSize(0)
+    rmue_forward_meas.SetFillColor(r.kBlue-9)
+
+    
+    rmue_mll_central.SetMarkerSize(1.2)
+    rmue_mll_forward.SetMarkerSize(1.2)
+
+    finalplot_rmue_mll_central = Canvas("finalplot_rmue_mll_central", "png", 0.6, 0.65, 0.8, 0.85)
+    finalplot_rmue_mll_central.addGraph(rmue_central_meas, "AP2", "DY mean", "L", r.kBlue-9, 1, 0)
+    finalplot_rmue_mll_central.addGraph(rmue_central_signal, "P", "Signal", "L", r.kRed, 1, 2)
+    finalplot_rmue_mll_central.addHisto(rmue_mll_central, "E1,SAME", "DY", "L", r.kBlack, 1, 1)
+    finalplot_rmue_mll_central.save(1, 0, 0, 4.0)
 
 
-    finalplot_rmue_mll_central = Canvas("finalplot_rmue_mll_central", "png", 0.6, 0.6, 0.8, 0.8)
-    finalplot_rmue_mll_central.addHisto(rmue_mll_central, "E1,SAME", "DY", "L", r.kBlack, 1, 0)
-    finalplot_rmue_mll_central.addGraph(rmue_central_signal, "P", "Signal", "L", r.kBlack, 1, 0)
-    finalplot_rmue_mll_central.addGraph(rmue_central_meas, "P", "DYmeas", "L", r.kBlue, 1, 0)
-    finalplot_rmue_mll_central.save(0, 0, 0, 4.0)
+    finalplot_rmue_mll_forward = Canvas("finalplot_rmue_mll_forward", "png", 0.6, 0.15, 0.8, 0.35)
+    finalplot_rmue_mll_forward.addGraph(rmue_forward_meas, "AP2", "DY mean", "L", r.kBlue-9, 1, 0)
+    finalplot_rmue_mll_forward.addGraph(rmue_forward_signal, "P", "Signal", "L", r.kRed, 1, 2)
+    finalplot_rmue_mll_forward.addHisto(rmue_mll_forward, "E1,SAME", "DY", "L", r.kBlack, 1, 1)
+    finalplot_rmue_mll_forward.save(1, 0, 0, 4.0)
 
 
-
-
+ 
 
 
 
