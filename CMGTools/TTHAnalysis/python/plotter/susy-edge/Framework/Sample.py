@@ -186,6 +186,18 @@ class Tree:
 
 
 
+   def getYields(self, lumi, var, xmin, xmax, cut):
+  
+      h = self.getTH1F(lumi, "yields", var, 1, xmin, xmax, cut, "", "")
+      nbinmin = h.FindBin(xmin)
+      nbinmax = h.FindBin(xmax)
+      error = r.Double()
+      value = h.IntegralAndError(nbinmin, nbinmax, error)
+      y = [value, error]
+      
+      del h
+      return y
+
    def getStack(self, lumi, name, var, nbin, xmin, xmax, cut, options, xlabel):
    
      hs = THStack(name, "")
