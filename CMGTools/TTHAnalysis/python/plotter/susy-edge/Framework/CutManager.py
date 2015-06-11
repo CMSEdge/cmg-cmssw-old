@@ -17,12 +17,12 @@ class CutManager:
       ## self.leptonID = "LepGood_tightId[0] > 0 && LepGood_tightId[1] > 0"
       ## self.goodLepton = self.twoLeptons + " && " + self.leptonPt + " && " + self.leptonEta + " && " + self.ECALCrack  + " && " + self.leptonDR + " && " + self.leptonID
       self.goodLepton = self.twoLeptons + "&&" + self.leptonPt + "&&" + self.leptonDR + "&&" + self.ECALCrack + "&&" + self.leptonsMll
-      self.ee = "(Lep_Edge_pdgId[0] * Lep_Edge_pdgId[1] == -121) && HLT_DoubleEl > 0"
-      self.mm = "(Lep_Edge_pdgId[0] * Lep_Edge_pdgId[1] == -169) && HLT_DoubleMu > 0"
-      self.OF = "(Lep_Edge_pdgId[0] * Lep_Edge_pdgId[1] == -143) && HLT_MuEG > 0"
-      #self.ee = "(Lep_Edge_pdgId[0] * Lep_Edge_pdgId[1] == -121)"
-      #self.mm = "(Lep_Edge_pdgId[0] * Lep_Edge_pdgId[1] == -169)"
-      #self.OF = "(Lep_Edge_pdgId[0] * Lep_Edge_pdgId[1] == -143)"
+      #self.ee = "((Lep_Edge_pdgId[0] * Lep_Edge_pdgId[1] == -121) && HLT_DoubleEl > 0)"
+      #self.mm = "((Lep_Edge_pdgId[0] * Lep_Edge_pdgId[1] == -169) && HLT_DoubleMu > 0)"
+      #self.OF = "((Lep_Edge_pdgId[0] * Lep_Edge_pdgId[1] == -143) && HLT_MuEG > 0)"
+      self.ee = "(Lep_Edge_pdgId[0] * Lep_Edge_pdgId[1] == -121)"
+      self.mm = "(Lep_Edge_pdgId[0] * Lep_Edge_pdgId[1] == -169)"
+      self.OF = "(Lep_Edge_pdgId[0] * Lep_Edge_pdgId[1] == -143)"
       self.SF = "(" + self.ee + " || " +  self.mm + ")"
       self.nj2 = "(t.nJetSel_Edge >= 2)"
       self.METJetsSignalRegion = "((met_pt > 150 && t.nJetSel_Edge > 1) || (met_pt > 100 && t.nJetSel_Edge > 2))"
