@@ -1,5 +1,5 @@
 import ROOT as r
-
+from array import array
 from ROOT import TTree, TFile, TCut, TH1F, TH2F, THStack, TCanvas
 
 
@@ -32,11 +32,15 @@ class Sample:
 
    def getTH1F(self, lumi, name, var, nbin, xmin, xmax, cut, options, xlabel):
  
-      h = TH1F(name, "", nbin, xmin, xmax)
+      if(xmin == xmax):
+        h = TH1F(name, "", len(nbin)-1, array('d', nbin))
+        ylabel = "N. Events"
+      else:
+        h = TH1F(name, "", nbin, xmin, xmax)
+        bw = int((xmax-xmin)/nbin)
+        ylabel = "Events / " + str(bw) + " GeV"
       h.Sumw2()
       h.GetXaxis().SetTitle(xlabel)
-      b = int((xmax-xmin)/nbin)
-      ylabel = "Events / " + str(b) + " GeV"
       h.GetYaxis().SetTitle(ylabel)
       
       if(self.isData == 0):
@@ -86,11 +90,15 @@ class Block:
 
    def getTH1F(self, lumi, name, var, nbin, xmin, xmax, cut, options, xlabel):
 
-     h = TH1F(name, "", nbin, xmin, xmax)
+     if(xmin == xmax):
+       h = TH1F(name, "", len(nbin)-1, array('d', nbin))
+       ylabel = "N. Events"
+     else:
+       h = TH1F(name, "", nbin, xmin, xmax)
+       bw = int((xmax-xmin)/nbin)
+       ylabel = "Events / " + str(bw) + " GeV"
      h.Sumw2()
      h.GetXaxis().SetTitle(xlabel)
-     b = int((xmax-xmin)/nbin)
-     ylabel = "Events / " + str(b) + " GeV"
      h.GetYaxis().SetTitle(ylabel)
 
      for s in self.samples:
@@ -225,11 +233,15 @@ class Tree:
 
    def getTH1F(self, lumi, name, var, nbin, xmin, xmax, cut, options, xlabel):
    
-     h = TH1F(name, "", nbin, xmin, xmax)
+     if(xmin == xmax):
+       h = TH1F(name, "", len(nbin)-1, array('d', nbin))
+       ylabel = "N. Events"
+     else:
+       h = TH1F(name, "", nbin, xmin, xmax)
+       bw = int((xmax-xmin)/nbin)
+       ylabel = "Events / " + str(bw) + " GeV"
      h.Sumw2()
      h.GetXaxis().SetTitle(xlabel)
-     bw = int((xmax-xmin)/nbin)
-     ylabel = "Events / " + str(bw) + " GeV"
      h.GetYaxis().SetTitle(ylabel)
      
      for b in self.blocks:

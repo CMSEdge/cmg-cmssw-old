@@ -108,10 +108,12 @@ if __name__ == "__main__":
     r.setTDRStyle() 
     cuts = CutManager()
 
-
+    bins = [50, 60, 70, 80, 90, 100, 120, 150, 180, 220, 260, 300]
     #####Attention: setting the first bin in 50 because we only have DY mll>50 at this point
-    mll_ee_central = tree.getTH1F(4, "mll_ee_central", "t.lepsMll_Edge", 25, 50, 300, cuts.Add(cuts.DYControlNoMassLeptonee(), cuts.Central()), "", "m_{ll} [GeV]")
-    mll_mm_central = tree.getTH1F(4, "mll_mm_central", "t.lepsMll_Edge", 25, 50, 300, cuts.Add(cuts.DYControlNoMassLeptonmm(), cuts.Central()), "", "m_{ll} [GeV]")
+    #mll_ee_central = tree.getTH1F(4, "mll_ee_central", "t.lepsMll_Edge", 25, 50, 300, cuts.Add(cuts.DYControlNoMassLeptonee(), cuts.Central()), "", "m_{ll} [GeV]")
+    #mll_mm_central = tree.getTH1F(4, "mll_mm_central", "t.lepsMll_Edge", 25, 50, 300, cuts.Add(cuts.DYControlNoMassLeptonmm(), cuts.Central()), "", "m_{ll} [GeV]")
+    mll_ee_central = tree.getTH1F(4, "mll_ee_central", "t.lepsMll_Edge", bins, 1, 1, cuts.Add(cuts.DYControlNoMassLeptonee(), cuts.Central()), "", "m_{ll} [GeV]")
+    mll_mm_central = tree.getTH1F(4, "mll_mm_central", "t.lepsMll_Edge", bins, 1, 1,cuts.Add(cuts.DYControlNoMassLeptonmm(), cuts.Central()), "", "m_{ll} [GeV]")
     met_ee_central = tree.getTH1F(4, "met_ee_central", "met_pt", 40, 0, 300, cuts.Add(cuts.DYControlNoMassLeptonee(), cuts.Central()), "", "m_{ll} [GeV]")
     met_mm_central = tree.getTH1F(4, "met_mm_central", "met_pt", 40, 0, 300, cuts.Add(cuts.DYControlNoMassLeptonmm(), cuts.Central()), "", "m_{ll} [GeV]")
     mll_ee_central_lowmass = tree.getYields(4, "t.lepsMll_Edge", 50, 1000, cuts.Add(cuts.SignalLowMassee(), cuts.Central()))
@@ -123,8 +125,10 @@ if __name__ == "__main__":
     mll_ee_central_DYmeas = tree.getYields(4, "t.lepsMll_Edge", 50, 1000, cuts.AddList([cuts.SignalZMassee(), cuts.Central(), cuts.DYMass()]))
     mll_mm_central_DYmeas = tree.getYields(4, "t.lepsMll_Edge", 50, 1000, cuts.AddList([cuts.SignalZMassmm(), cuts.Central(), cuts.DYMass()]))
     
-    mll_ee_forward = tree.getTH1F(4, "mll_ee_forward", "t.lepsMll_Edge", 25, 50, 300, cuts.Add(cuts.DYControlNoMassLeptonee(), cuts.Forward()), "", "m_{ll} [GeV]")
-    mll_mm_forward = tree.getTH1F(4, "mll_mm_forward", "t.lepsMll_Edge", 25, 50, 300, cuts.Add(cuts.DYControlNoMassLeptonmm(), cuts.Forward()), "", "m_{ll} [GeV]")
+    #mll_ee_forward = tree.getTH1F(4, "mll_ee_forward", "t.lepsMll_Edge", 25, 50, 300, cuts.Add(cuts.DYControlNoMassLeptonee(), cuts.Forward()), "", "m_{ll} [GeV]")
+    #mll_mm_forward = tree.getTH1F(4, "mll_mm_forward", "t.lepsMll_Edge", 25, 50, 300, cuts.Add(cuts.DYControlNoMassLeptonmm(), cuts.Forward()), "", "m_{ll} [GeV]")
+    mll_ee_forward = tree.getTH1F(4, "mll_ee_forward", "t.lepsMll_Edge", bins, 1, 1, cuts.Add(cuts.DYControlNoMassLeptonee(), cuts.Forward()), "", "m_{ll} [GeV]")
+    mll_mm_forward = tree.getTH1F(4, "mll_mm_forward", "t.lepsMll_Edge", bins, 1, 1, cuts.Add(cuts.DYControlNoMassLeptonmm(), cuts.Forward()), "", "m_{ll} [GeV]")
     met_ee_forward = tree.getTH1F(4, "met_ee_forward", "met_pt", 20, 0, 200, cuts.Add(cuts.DYControlNoMassLeptonee(), cuts.Forward()), "", "m_{ll} [GeV]")
     met_mm_forward = tree.getTH1F(4, "met_mm_forward", "met_pt", 20, 0, 200, cuts.Add(cuts.DYControlNoMassLeptonmm(), cuts.Forward()), "", "m_{ll} [GeV]")
     mll_ee_forward_lowmass = tree.getYields(4, "t.lepsMll_Edge", 50, 1000, cuts.Add(cuts.SignalLowMassee(), cuts.Forward()))
