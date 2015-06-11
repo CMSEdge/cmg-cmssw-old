@@ -33,6 +33,8 @@ def make_rsfof(histo_sf, histo_of):
     
     ratio.Fit('myfit')
 
+    ratio.GetYaxis().SetRangeUser(0.5,1.5)
+
     ## ratio.Draw()
     ## fit.Draw('same')
     ## ps = ratio.GetListOfFunctions().FindObject('stats')
@@ -43,7 +45,7 @@ def make_rsfof(histo_sf, histo_of):
     ## ps.SetY1NDC(0.15)
     ## ps.SetY2NDC(0.25)
 
-    f = open(ratio.GetName()+'_values.txt', 'w')
+    f = open('txts/'+ratio.GetName()+'_values.txt', 'w')
     for i in range(1, ratio.GetNbinsX()+1):
         min, max = ratio.GetBinLowEdge(i), ratio.GetBinLowEdge(i)+ratio.GetBinWidth(i)
         print    'R_SFOF in [%.2f, %.2f] GeV:\t%.3f +- %.3f'    %(min, max, ratio.GetBinContent(i), ratio.GetBinError(i) )
@@ -60,6 +62,7 @@ if __name__ == '__main__':
     parser = OptionParser(usage='usage: %prog [options] FilenameWithSamples', version='%prog 1.0')
     parser.add_option('-m', '--mode', action='store', dest='mode', default='rsfof', help='Operation mode')
     parser.add_option('-r', '--region', action='store', type='string', dest='region', default='inclusive', help='region for which to produce Rsfof plots. \n choices are \'inclusive\', \'ttjets\', \'signal\'. default is \'inclusive\'')
+    parser.add_option('-t', '--trigger', action='store', type='int', dest='triggerFlag', default='1', help='Trigger cut. Set to 0 if you want to run without trigger')
     (options, args) = parser.parse_args()
 
 
@@ -81,7 +84,11 @@ if __name__ == '__main__':
     elif options.region == 'signal':
        r_cut = cuts.METJetsSignalRegion
 
-    for var in ['mll', 'met']:
+    if not options.triggerFlag:
+        print 'running without trigger...'
+
+    #for var in ['mll', 'met', 'nj', 'nvx']:
+    for var in ['met']:
 
         print '======================='
         print 'producing rsfof for', var
@@ -99,10 +106,26 @@ if __name__ == '__main__':
 
         elif var =='nj':
             t_var = 't.nJetSel_Edge'
-            bin    = [ 5,  1,   5]
+            bin    = [ 7,  0.5,   7.5]
             v_name = 'N_{jets}'
 
+        elif var =='nvx':
+            t_var = 'nVert'
+            bin    = [ 10,  1,  30]
+            v_name = 'N_{vertices}'
 
+
+        trigsf = '(HLT_DoubleMu >0 || HLT_DoubleEl > 0)'
+        trigof = '(HLT_MuEG > 0)'
+
+        trig_suffix = ''
+        if not options.triggerFlag:
+            trigsf = '(HLT_DoubleMu > -1 || HLT_DoubleEl > -1)'
+            trigof = '(HLT_MuEG > -1)'
+            trig_suffix = '_notrig'
+
+        print trigsf, trigof
+        
         for eta in ['central', 'forward']:
 
             print '...in', eta
@@ -110,16 +133,13 @@ if __name__ == '__main__':
             if   eta == 'central': etacut = cuts.Central()
             elif eta == 'forward': etacut = cuts.Forward()
 
-            trigsf = '(HLT_DoubleMu >0 || HLT_DoubleEl > 0)'
-            trigof = '(HLT_MuEG > 0)'
-        
             sf = tree.getTH1F(4, var+'sf_'+eta+'_'+options.region, t_var, bin[0], bin[1], bin[2], cuts.AddList([r_cut, cuts.GoodLeptonSF(), etacut, trigsf]), '', v_name)
             of = tree.getTH1F(4, var+'of_'+eta+'_'+options.region, t_var, bin[0], bin[1], bin[2], cuts.AddList([r_cut, cuts.GoodLeptonOF(), etacut, trigof]), '', v_name)
 
    
             rsfof= make_rsfof(sf, of)
-            plot_rsfof= Canvas('plot_rsfof_'+var+'_'+eta+'_'+options.region, 'png,pdf', 0.6, 0.6, 0.8, 0.8)
-            plot_rsfof.addHisto(rsfof, 'PEZ1', 'OF', 'L', r.kBlack, 1, 0)
+            plot_rsfof= Canvas('plot_rsfof_'+var+'_'+eta+'_'+options.region+trig_suffix, 'png,pdf', 0.6, 0.6, 0.8, 0.8)
+            plot_rsfof.addHisto(rsfof, 'PE', 'OF', 'L', r.kBlack, 1, 0)
             plot_rsfof.addLine(rsfof.GetXaxis().GetXmin(), 1., rsfof.GetXaxis().GetXmax(),1., 3)
             plot_rsfof.save(0, 0, 0, 4.0)
             
