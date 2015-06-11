@@ -1,4 +1,4 @@
-from ROOT import TCanvas, TLegend, TPad, TLine, TLatex, TH1F, THStack, TGraphErrors, TLine
+from ROOT import TCanvas, TLegend, TPad, TLine, TLatex, TH1F, THStack, TGraphErrors, TLine, TPaveStats
 import ROOT as r
 
 class Canvas:
@@ -222,6 +222,14 @@ class Canvas:
       for line in self.lines:
           line.Draw()
   
+      ## ps = self.histos[0].GetListOfFunctions().FindObject('stat')
+      ## if ps:
+      ##   ps.SetX1NDC(0.15)
+      ##   ps.SetX2NDC(0.55)
+
+      ##   ps.SetY1NDC(0.15)
+      ##   ps.SetY2NDC(0.25)
+            
 
       if(legend):
           self.makeLegend()

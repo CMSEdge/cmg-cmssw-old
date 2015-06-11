@@ -40,6 +40,8 @@ def getTriggerEffs(tree, cut, addCut, var, varname, binning, lumi):
 
     errs = TGraphAsymmErrors(passHisto, allHisto, 'a')
 
+    errs.GetHistogram().GetXaxis().SetTitle(varname)
+
     return errs
 
 
@@ -91,9 +93,9 @@ if __name__ == '__main__':
         else: 
             print 'something is wrong...'
 
-        eff_mll  = getTriggerEffs(tree, cuts.AddList([lepcut,cuts.Central(),'HLT_HT900 > 0', 't.htJet35j_Edge > 850']), trigger, 't.lepsMll_Edge'  , mllvar, [20, 0, 200], 4.)
-        eff_l1pt = getTriggerEffs(tree, cuts.AddList([lepcut,cuts.Central(),'HLT_HT900 > 0', 't.htJet35j_Edge > 850']), trigger, 't.Lep_Edge_pt[0]', pt1var, [20, 0, 100], 4.)
-        eff_l2pt = getTriggerEffs(tree, cuts.AddList([lepcut,cuts.Central(),'HLT_HT900 > 0', 't.htJet35j_Edge > 850']), trigger, 't.Lep_Edge_pt[1]', pt2var, [20, 0, 100], 4.)
+        eff_mll  = getTriggerEffs(tree, cuts.AddList([lepcut,cuts.Central(),'HLT_HT900 > 0', 't.htJet35j_Edge > 850']), trigger, 't.lepsMll_Edge'  , mllvar, [20,  0, 200], 4.)
+        eff_l1pt = getTriggerEffs(tree, cuts.AddList([lepcut,cuts.Central(),'HLT_HT900 > 0', 't.htJet35j_Edge > 850']), trigger, 't.Lep_Edge_pt[0]', pt1var, [10, 20, 120], 4.)
+        eff_l2pt = getTriggerEffs(tree, cuts.AddList([lepcut,cuts.Central(),'HLT_HT900 > 0', 't.htJet35j_Edge > 850']), trigger, 't.Lep_Edge_pt[1]', pt2var, [10, 20, 120], 4.)
 
         plot_mll = Canvas('plot_eff_'+flavor+'_mll', 'png', 0.6, 0.6, 0.8, 0.8)
         eff_mll.GetHistogram().Draw()

@@ -18,6 +18,7 @@ class CutManager:
       self.mm = "Lep_Edge_pdgId[0] * Lep_Edge_pdgId[1] == -169"
       self.OF = "Lep_Edge_pdgId[0] * Lep_Edge_pdgId[1] == -143"
       self.SF = "(" + self.ee + " || " +  self.mm + ")"
+      self.nj2 = "(t.nJetSel_Edge >= 2)"
       self.METJetsSignalRegion = "((met_pt > 150 && t.nJetSel_Edge > 1) || (met_pt > 100 && t.nJetSel_Edge > 2))"
       self.METJetsControlRegion = "(met_pt > 100 && met_pt < 150 && t.nJetSel_Edge == 2)"
       self.DYControlRegion = "(met_pt < 50 && t.nJetSel_Edge >= 2)"
@@ -211,14 +212,6 @@ class CutManager:
 
       return self.brackets(self.ControlNoMassLeptonee() + " && " + self.highmass)
    
-   
-
-
-
-
-
-
-
 
 
 
