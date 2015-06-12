@@ -35,9 +35,12 @@ class Rounder:
        val = self.getRound(a, exposigma)
        return [val, sigma]
 
+   def toString(self, a):
 
-   def toString(self, a, sa):
+       exposigma = self.getExponent(a)
+       return str(self.getRound(a, exposigma))
+
+   def toStringB(self, a, sa):
 
        p = self.roundTo(a, sa)
        return str(p[0]) + " +/- " + str(p[1])
-

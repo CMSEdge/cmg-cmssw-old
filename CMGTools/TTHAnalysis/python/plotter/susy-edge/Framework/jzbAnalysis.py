@@ -79,6 +79,15 @@ if __name__ == '__main__':
     cuts = CutManager()
 
 
+
+    ###Calculating the recoil response in JZB (Added by Pablo)
+    #recoil_response_central = tree.getTH2F(4, 'recoil_vs_zpt', 't.lepsMETRec_Edge:t.lepsZPt_Edge', 20, 0, 400, 20, 0, 2, cuts.Central(), '', 'Z_{pT} [GeV]', 'Recoil [GeV]')
+    #response_canvas_central = Canvas('response_canvas_central', 'png', 0.6, 0.6, 0.8, 0.8)
+    #response_canvas_central.addHisto(recoil_response_central, 'COLZ', '', 'L', r.kBlack, 1, 0)
+    #response_canvas_central.save(0, 0, 0, 4.0)
+
+
+
     jzb_vs_nvx  = tree.getTH2F(4, 'jzb_vs_nvx', 't.lepsJZB_Edge:nVert'         , 10, 0.,  30., 20, -100., 100., cuts.Add(cuts.DYControlNoMassLeptonSF(), cuts.Central()), '', 'n_{vertices}', 'JZB')
     jzb_vs_met  = tree.getTH2F(4, 'jzb_vs_met', 't.lepsJZB_Edge:met_pt'        ,  5, 0.,  50., 20, -100., 100., cuts.Add(cuts.DYControlNoMassLeptonSF(), cuts.Central()), '', 'MET'         , 'JZB')
     jzb_vs_mll  = tree.getTH2F(4, 'jzb_vs_mll', 't.lepsJZB_Edge:t.lepsMll_Edge', 20,80., 100., 20, -100., 100., cuts.Add(cuts.DYControlNoMassLeptonSF(), cuts.Central()), '', 'm_{ll}'      , 'JZB')
@@ -130,6 +139,6 @@ if __name__ == '__main__':
     plot_jzb_vs_spt_proj.addHisto(jzb_vs_spt_proj, 'E1', 'OF', 'L', r.kBlack, 1, 0)
     plot_jzb_vs_spt_proj.addLine(jzb_vs_spt_proj.GetXaxis().GetXmin(), 0., jzb_vs_spt_proj.GetXaxis().GetXmax(),0., 3)
     plot_jzb_vs_spt_proj.save(0, 0, 0, 4.0)
-    
+   
     
 

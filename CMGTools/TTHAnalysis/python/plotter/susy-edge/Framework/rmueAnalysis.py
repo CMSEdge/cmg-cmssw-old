@@ -15,7 +15,7 @@
 
 import ROOT as r
 import math as math
-
+import Rounder as rounder
 from optparse import OptionParser
 from ROOT import gROOT, TCanvas, TFile
 from Sample import Sample, Block, Tree
@@ -61,10 +61,6 @@ def make_rmue_signal(ee_l, mm_l, ee_Z, mm_Z, ee_h, mm_h):
     rmue_ex = array("d", [5, 5, 100])
     rmue_y = array("d", [rmue_l[0], rmue_Z[0], rmue_h[0]])
     rmue_ey = array("d", [rmue_l[1], rmue_Z[1], rmue_h[1]])
-    
-    print "r_mue in low mass signal region " + str(rmue_l[0]) + " +/- " + str(rmue_l[1])
-    print "r_mue in onZ mass signal region " + str(rmue_Z[0]) + " +/- " + str(rmue_Z[1])
-    print "r_mue in high mass signal region " + str(rmue_h[0]) + " +/- " + str(rmue_h[1])
 
     gr = TGraphErrors(3, rmue_x, rmue_y, rmue_ex, rmue_ey)
     gr.GetYaxis().SetTitle("r_{#mu e}")
@@ -82,8 +78,6 @@ def make_rmue_meas(ee, mm, syst):
     error = math.sqrt(rmue_m[1]*rmue_m[1] + (syst*rmue_m[0])*(syst*rmue_m[0]))
     rmue_ey = array("d", [error])
     
-    print "r_mue in DY region (mean) " + str(rmue_m[0]) + " +/- " + str(rmue_m[1]) + " +/- " + str(syst*rmue_m[0]) 
-
     
     gr = TGraphErrors(1, rmue_x, rmue_y, rmue_ex, rmue_ey)
     gr.GetYaxis().SetTitle("r_{#mu e}")
@@ -203,7 +197,18 @@ if __name__ == "__main__":
     finalplot_rmue_mll_forward.save(1, 0, 0, 4.0)
 
 
- 
+    #####Printing results
+    a = rounder.Rounder()
+    print "Measurement in DY region 60 GeV < mll < 120 GeV central: " + a.toStringB(rmue_central_DY_meas[0], rmue_central_DY_meas[1]) + " +/- " + a.toString(rmue_central_DY_meas[0]*0.1)
+    print "Measurement in Signal region 50 GeV < mll < 70 GeV central: " + a.toStringB(rmue_central_l[0], rmue_central_l[1])
+    print "Measurement in Signal region 81 GeV < mll < 101 GeV central: " + a.toStringB(rmue_central_Z[0], rmue_central_Z[1])
+    print "Measurement in Signal region mll > 120 GeV central: " + a.toStringB(rmue_central_h[0], rmue_central_h[1])
+    print "Measurement in DY region 60 GeV < mll < 120 GeV forward: " + a.toStringB(rmue_forward_DY_meas[0], rmue_forward_DY_meas[1]) + " +/- " + a.toString(rmue_forward_DY_meas[0]*0.2)
+    print "Measurement in Signal region 50 GeV < mll < 70 GeV forward: " + a.toStringB(rmue_forward_l[0], rmue_forward_l[1])
+    print "Measurement in Signal region 81 GeV < mll < 101 GeV forward: " + a.toStringB(rmue_forward_Z[0], rmue_forward_Z[1])
+    print "Measurement in Signal region mll > 120 GeV forward: " + a.toStringB(rmue_forward_h[0], rmue_forward_h[1])
+
+
 
 
 
