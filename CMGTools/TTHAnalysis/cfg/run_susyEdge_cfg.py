@@ -57,35 +57,39 @@ lepAna.loose_muon_dz     = 0.5,
 lepAna.loose_muon_relIso = 999
 lepAna.mu_tightId = "POG_ID_Tight"
 
+# Jets
+jetAna.recalibrateJets = False
+
 isolation = "relIso03"
-## not needed for edge  if isolation == "ptRel": 
-## not needed for edge      # delay isolation cut for leptons of pt > 10, for which we do pTrel recovery
-## not needed for edge      lepAna.loose_muon_isoCut     = lambda muon : muon.relIso03 < 0.5 or muon.pt() > 10
-## not needed for edge      lepAna.loose_electron_isoCut = lambda elec : elec.relIso03 < 0.5 or elec.pt() > 10
-## not needed for edge      # in the cleaning, keep the jet if the lepton fails relIso or ptRel
-## not needed for edge      jetAna.jetLepArbitration = lambda jet,lepton : (
-## not needed for edge          lepton if (lepton.relIso03 < 0.4 or ptRelv1(lepton.p4(),jet.p4()) > 5) else jet
-## not needed for edge      )
-## not needed for edge      ttHCoreEventAna.leptonMVAKindTTH = "SusyWithBoost"
-## not needed for edge      ttHCoreEventAna.leptonMVAKindSusy = "SusyWithBoost" 
-## not needed for edge      ttHCoreEventAna.leptonMVAPathTTH = "CMGTools/TTHAnalysis/macros/leptons/trainingPHYS14leptonMVA_PHYS14eleMVA_MiniIso_ttH/weights/%s_BDTG.weights.xml"
-## not needed for edge      ttHCoreEventAna.leptonMVAPathSusy = "CMGTools/TTHAnalysis/macros/leptons/trainingPHYS14leptonMVA_PHYS14eleMVA_MiniIso_SusyT1/weights/%s_BDTG.weights.xml"
-## not needed for edge      # insert a second skimmer after the jet cleaning 
-## not needed for edge      ttHLepSkim2 = cfg.Analyzer(
-## not needed for edge          ttHLepSkimmer, name='ttHLepSkimmer2',
-## not needed for edge          minLeptons = 2,
-## not needed for edge          maxLeptons = 999,
-## not needed for edge          )
-## not needed for edge      susyCoreSequence.insert(susyCoreSequence.index(jetAna)+1, ttHLepSkim2)
-## not needed for edge  elif isolation == "miniIso": 
-## not needed for edge      lepAna.loose_muon_isoCut     = lambda muon : muon.miniRelIso < 0.4
-## not needed for edge      lepAna.loose_electron_isoCut = lambda elec : elec.miniRelIso < 0.4
-## not needed for edge  elif isolation == None:
-## not needed for edge      lepAna.loose_muon_isoCut     = lambda muon : True
-## not needed for edge      lepAna.loose_electron_isoCut = lambda elec : True
-## not needed for edge  else:
-## not needed for edge      # nothing to do, will use normal relIso03
-## not needed for edge      pass
+#isolation = "ptRel"
+if isolation == "ptRel": 
+    # delay isolation cut for leptons of pt > 10, for which we do pTrel recovery
+    lepAna.loose_muon_isoCut     = lambda muon : muon.relIso03 < 0.5 or muon.pt() > 10
+    lepAna.loose_electron_isoCut = lambda elec : elec.relIso03 < 0.5 or elec.pt() > 10
+    # in the cleaning, keep the jet if the lepton fails relIso or ptRel
+    jetAna.jetLepArbitration = lambda jet,lepton : (
+        lepton if (lepton.relIso03 < 0.4 or ptRelv1(lepton.p4(),jet.p4()) > 5) else jet
+    )
+    ttHCoreEventAna.leptonMVAKindTTH = "SusyWithBoost"
+    ttHCoreEventAna.leptonMVAKindSusy = "SusyWithBoost" 
+    ttHCoreEventAna.leptonMVAPathTTH = "CMGTools/TTHAnalysis/macros/leptons/trainingPHYS14leptonMVA_PHYS14eleMVA_MiniIso_ttH/weights/%s_BDTG.weights.xml"
+    ttHCoreEventAna.leptonMVAPathSusy = "CMGTools/TTHAnalysis/macros/leptons/trainingPHYS14leptonMVA_PHYS14eleMVA_MiniIso_SusyT1/weights/%s_BDTG.weights.xml"
+    # insert a second skimmer after the jet cleaning 
+    ttHLepSkim2 = cfg.Analyzer(
+        ttHLepSkimmer, name='ttHLepSkimmer2',
+        minLeptons = 2,
+        maxLeptons = 999,
+        )
+    susyCoreSequence.insert(susyCoreSequence.index(jetAna)+1, ttHLepSkim2)
+elif isolation == "miniIso": 
+    lepAna.loose_muon_isoCut     = lambda muon : muon.miniRelIso < 0.4
+    lepAna.loose_electron_isoCut = lambda elec : elec.miniRelIso < 0.4
+elif isolation == None:
+    lepAna.loose_muon_isoCut     = lambda muon : True
+    lepAna.loose_electron_isoCut = lambda elec : True
+else:
+    # nothing to do, will use normal relIso03
+    pass
 
 # Switch off slow photon MC matching
 photonAna.do_mc_match = False
@@ -137,17 +141,8 @@ ttHDecluster = cfg.Analyzer(
     )
 susyCoreSequence.insert(susyCoreSequence.index(ttHFatJetAna)+1, ttHDecluster)
 
-##------------------------------------------ 
-##  JZB specific VARIABLES: jzb, pt1, pt2, phi1, phi2, eta1, eta2, mll, index1, index2
-##------------------------------------------ 
-from CMGTools.TTHAnalysis.analyzers.ttHJZBTopologicalVars import ttHJZBTopologicalVars
 
-ttHJZBTopologicalVars = cfg.Analyzer(
-            ttHJZBTopologicalVars, name = 'ttHJZBTopologicalVars'
-            )
-
-
-from CMGTools.TTHAnalysis.analyzers.treeProducerSusyEdge import * 
+from CMGTools.TTHAnalysis.analyzers.treeProducerSusyMultilepton import * 
 ## Tree Producer
 treeProducer = cfg.Analyzer(
      AutoFillTreeProducer, name='treeProducerSusyEdge',
@@ -155,9 +150,9 @@ treeProducer = cfg.Analyzer(
      saveTLorentzVectors = False,  # can set to True to get also the TLorentzVectors, but trees will be bigger
      defaultFloatType = 'F', # use Float_t for floating point
      PDFWeights = PDFWeights,
-     globalVariables = susyJZBEdge_globalVariables,
-     globalObjects = susyJZBEdge_globalObjects,
-     collections = susyJZBEdge_collections,
+     globalVariables = susyMultilepton_globalVariables,
+     globalObjects = susyMultilepton_globalObjects,
+     collections = susyMultilepton_collections,
 )
 
 ## histo counter
@@ -168,16 +163,16 @@ susyCoreSequence.insert(susyCoreSequence.index(skimAnalyzer),
 #-------- SAMPLES AND TRIGGERS -----------
 
 
-## from CMGTools.TTHAnalysis.samples.samples_13TeV_PHYS14 import triggers_mumu_iso, triggers_mumu_noniso, triggers_ee, triggers_3e, triggers_mue, triggers_1mu_iso, triggers_1e
-## triggerFlagsAna.triggerBits = {
-##     'DoubleMu' : triggers_mumu_iso,
-##     'DoubleMuNoIso' : triggers_mumu_noniso,
-##     'DoubleEl' : triggers_ee,
-##     'TripleEl' : triggers_3e,
-##     'MuEG'     : triggers_mue,
-##     'SingleMu' : triggers_1mu_iso,
-##     'SingleEl' : triggers_1e,
-## }
+from CMGTools.TTHAnalysis.samples.samples_13TeV_PHYS14 import triggers_mumu_iso, triggers_mumu_noniso, triggers_ee, triggers_3e, triggers_mue, triggers_1mu_iso, triggers_1e
+triggerFlagsAna.triggerBits = {
+    'DoubleMu' : triggers_mumu_iso,
+    'DoubleMuNoIso' : triggers_mumu_noniso,
+    'DoubleEl' : triggers_ee,
+    'TripleEl' : triggers_3e,
+    'MuEG'     : triggers_mue,
+    'SingleMu' : triggers_1mu_iso,
+    'SingleEl' : triggers_1e,
+}
 
 from CMGTools.TTHAnalysis.samples.samples_13TeV_PHYS14 import *
 
@@ -196,12 +191,18 @@ if False:
     QCDPtEMEnriched.remove(QCD_Pt10to20_EMEnriched)
     selectedComponents = [ QCD_Mu15 ] + QCD_Mu5 + QCDPtEMEnriched + QCDPtbcToE
 
-selectedComponents = [TTJets]
+susySignalT2tt = [SMS_T2tt_2J_mStop850_mLSP100, SMS_T2tt_2J_mStop650_mLSP325, SMS_T2tt_2J_mStop500_mLSP325, SMS_T2tt_2J_mStop425_mLSP325]
+
+selectedComponents = [TTJets, DYJetsToLL_M50] + DYJetsM50HT + susySignalT2tt
+
+## marc's testing for i in selectedComponents:
+## marc's testing     print 'running on', i
+## marc's testing sys.exit(0)
 
 
 # -- fine splitting, for some private MC samples with a single file
 for comp in selectedComponents:
-    comp.splitFactor = 400
+    comp.splitFactor = 600
     #comp.fineSplitFactor = 4
 
     
@@ -210,7 +211,7 @@ for comp in selectedComponents:
 sequence = cfg.Sequence(susyCoreSequence+[
         ttHJetTauAna,
         ttHEventAna,
-        ttHJZBTopologicalVars,
+        ##ttHJZBTopologicalVars,
         treeProducer,
     ])
 
@@ -219,6 +220,7 @@ sequence = cfg.Sequence(susyCoreSequence+[
 
 from PhysicsTools.HeppyCore.framework.heppy import getHeppyOption
 test = getHeppyOption('test')
+
 if test == '1':
     comp = TTH
     if getHeppyOption('T1tttt'):
@@ -234,6 +236,35 @@ elif test == '2':
     comp = TTJets
     comp.files = comp.files[:1]
     comp.splitFactor = 1
+    comp.finesplitFactor = 4
+    selectedComponents = [comp]
+elif test == 'synch':
+    print 'I\'m in the synch test thing here!!'
+    ##susyCoreSequence.remove(susyScanAna)
+    ## cfg.Sequence.remove(susyScanAna)
+    comp = TTJets
+    comp.files = ['/afs/cern.ch/work/p/pablom/private/organization/CMSSW_7_4_3/src/CMGTools/TTHAnalysis/cfg/ttbarExample.root']
+    #comp.files = ['/afs/cern.ch/work/m/mdunser/public/synchFiles_13TeV/TTJets/00C90EFC-3074-E411-A845-002590DB9262.root',
+    #              '/afs/cern.ch/work/m/mdunser/public/synchFiles_13TeV/TTJets/00D3EAF1-3174-E411-A5B2-0025904B144E.root',
+    #              '/afs/cern.ch/work/m/mdunser/public/synchFiles_13TeV/TTJets/02EF3EFC-0475-E411-A9DB-002590DB9166.root',
+    #              '/afs/cern.ch/work/m/mdunser/public/synchFiles_13TeV/TTJets/0434E222-1C75-E411-B4D4-0025907FD34C.root',
+    #              '/afs/cern.ch/work/m/mdunser/public/synchFiles_13TeV/TTJets/04829E8D-6174-E411-97F0-0025901D4940.root',
+    #              '/afs/cern.ch/work/m/mdunser/public/synchFiles_13TeV/TTJets/04C50B58-7B76-E411-9101-003048D437D2.root',
+    #              '/afs/cern.ch/work/m/mdunser/public/synchFiles_13TeV/TTJets/060D9464-7174-E411-8EC9-0025907DC9BE.root',
+    #              '/afs/cern.ch/work/m/mdunser/public/synchFiles_13TeV/TTJets/06180A42-DA75-E411-B64E-00266CF2AE10.root',
+    #              '/afs/cern.ch/work/m/mdunser/public/synchFiles_13TeV/TTJets/063CF1C6-C176-E411-A90A-003048F0E83A.root',
+    #              '/afs/cern.ch/work/m/mdunser/public/synchFiles_13TeV/TTJets/0661643D-4F76-E411-862B-002590AC4E28.root']
+    ##comp.files = ['root://eoscms//eos/cms/store/cmst3/user/mdunser/synching/ttjetsPHYS14/00C90EFC-3074-E411-A845-002590DB9262.root',
+    ##              'root://eoscms//eos/cms/store/cmst3/user/mdunser/synching/ttjetsPHYS14/00D3EAF1-3174-E411-A5B2-0025904B144E.root',
+    ##              'root://eoscms//eos/cms/store/cmst3/user/mdunser/synching/ttjetsPHYS14/02EF3EFC-0475-E411-A9DB-002590DB9166.root',
+    ##              'root://eoscms//eos/cms/store/cmst3/user/mdunser/synching/ttjetsPHYS14/0434E222-1C75-E411-B4D4-0025907FD34C.root',
+    ##              'root://eoscms//eos/cms/store/cmst3/user/mdunser/synching/ttjetsPHYS14/04829E8D-6174-E411-97F0-0025901D4940.root',
+    ##              'root://eoscms//eos/cms/store/cmst3/user/mdunser/synching/ttjetsPHYS14/04C50B58-7B76-E411-9101-003048D437D2.root',
+    ##              'root://eoscms//eos/cms/store/cmst3/user/mdunser/synching/ttjetsPHYS14/060D9464-7174-E411-8EC9-0025907DC9BE.root',
+    ##              'root://eoscms//eos/cms/store/cmst3/user/mdunser/synching/ttjetsPHYS14/06180A42-DA75-E411-B64E-00266CF2AE10.root',
+    ##              'root://eoscms//eos/cms/store/cmst3/user/mdunser/synching/ttjetsPHYS14/063CF1C6-C176-E411-A90A-003048F0E83A.root',
+    ##              'root://eoscms//eos/cms/store/cmst3/user/mdunser/synching/ttjetsPHYS14/0661643D-4F76-E411-862B-002590AC4E28.root']
+    comp.finesplitFactor = 10
     comp.finesplitFactor = 4
     selectedComponents = [comp]
 ## elif test == 'EOS':
