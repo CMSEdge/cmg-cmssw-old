@@ -163,37 +163,30 @@ susyCoreSequence.insert(susyCoreSequence.index(skimAnalyzer),
 #-------- SAMPLES AND TRIGGERS -----------
 
 
-from CMGTools.TTHAnalysis.samples.samples_13TeV_PHYS14 import triggers_mumu_iso, triggers_mumu_noniso, triggers_ee, triggers_3e, triggers_mue, triggers_1mu_iso, triggers_1e
+from CMGTools.TTHAnalysis.samples.triggers_13TeV_Spring15 import *
 triggerFlagsAna.triggerBits = {
-    'DoubleMu' : triggers_mumu_iso,
-    'DoubleMuNoIso' : triggers_mumu_noniso,
+    'DoubleMu' : triggers_mumu,
+    #'DoubleMuNoIso' : triggers_mumu_noniso,
     'DoubleEl' : triggers_ee,
-    'TripleEl' : triggers_3e,
-    'MuEG'     : triggers_mue,
-    'SingleMu' : triggers_1mu_iso,
-    'SingleEl' : triggers_1e,
+    'MuEG'     : triggers_emu,
+    'SingleMu' : triggers_1mu,
+    'SingleEl' : triggers_1el,
+    'HT' : triggers_ht,
+    'HTnoPF' : triggers_htnopf,
+    'HTMET' : triggers_htmet,
+    'HTJet' : triggers_htjet,
 }
 
-from CMGTools.TTHAnalysis.samples.samples_13TeV_PHYS14 import *
+from CMGTools.TTHAnalysis.samples.samples_13TeV_74X import *
 
-selectedComponents = [
-  ] + WJetsToLNuHT + DYJetsM50HT + [ #DYJetsToLL_M50,
-   TTJets ]+ SingleTop +[
-   TTWJets,TTZJets, TTH,
-   WZJetsTo3LNu, ZZTo4L,
-   #GGHZZ4L, GGHTT, VBFTT, 
-   SMS_T1tttt_2J_mGl1500_mLSP100, SMS_T1tttt_2J_mGl1200_mLSP800,
-   T5ttttDeg_mGo1000_mStop300_mCh285_mChi280, T5ttttDeg_mGo1000_mStop300_mCh285_mChi280_dil,
-   T5qqqqWW_mGo1200_mCh1000_mChi800_dilep, T5qqqqWWDeg_mGo1000_mCh315_mChi300_dilep
-]
 if False:
     ttHLepSkim.minLeptons = 1
     QCDPtEMEnriched.remove(QCD_Pt10to20_EMEnriched)
     selectedComponents = [ QCD_Mu15 ] + QCD_Mu5 + QCDPtEMEnriched + QCDPtbcToE
 
-susySignalT2tt = [SMS_T2tt_2J_mStop850_mLSP100, SMS_T2tt_2J_mStop650_mLSP325, SMS_T2tt_2J_mStop500_mLSP325, SMS_T2tt_2J_mStop425_mLSP325]
+##susySignalT2tt = [SMS_T2tt_2J_mStop850_mLSP100, SMS_T2tt_2J_mStop650_mLSP325, SMS_T2tt_2J_mStop500_mLSP325, SMS_T2tt_2J_mStop425_mLSP325]
 
-selectedComponents = [TTJets, DYJetsToLL_M50] + DYJetsM50HT + susySignalT2tt
+selectedComponents = [TTJets]
 
 ## marc's testing for i in selectedComponents:
 ## marc's testing     print 'running on', i
@@ -243,7 +236,9 @@ elif test == 'synch':
     ##susyCoreSequence.remove(susyScanAna)
     ## cfg.Sequence.remove(susyScanAna)
     comp = TTJets
-    comp.files = ['/afs/cern.ch/work/p/pablom/private/organization/CMSSW_7_4_3/src/CMGTools/TTHAnalysis/cfg/ttbarExample.root']
+    selectedComponents = [comp]
+    comp.files = comp.files[:1]
+    #comp.files = ['/afs/cern.ch/work/m/mdunser/public/spring15TTJets/022B08C4-C702-E511-9995-D4856459AC30.root']
     #comp.files = ['/afs/cern.ch/work/m/mdunser/public/synchFiles_13TeV/TTJets/00C90EFC-3074-E411-A845-002590DB9262.root',
     #              '/afs/cern.ch/work/m/mdunser/public/synchFiles_13TeV/TTJets/00D3EAF1-3174-E411-A5B2-0025904B144E.root',
     #              '/afs/cern.ch/work/m/mdunser/public/synchFiles_13TeV/TTJets/02EF3EFC-0475-E411-A9DB-002590DB9166.root',
@@ -266,7 +261,6 @@ elif test == 'synch':
     ##              'root://eoscms//eos/cms/store/cmst3/user/mdunser/synching/ttjetsPHYS14/0661643D-4F76-E411-862B-002590AC4E28.root']
     comp.finesplitFactor = 10
     comp.finesplitFactor = 4
-    selectedComponents = [comp]
 ## elif test == 'EOS':
 ##     comp = DYJetsToLL_M50#TTJets
 ##     comp.files = comp.files[:1]
