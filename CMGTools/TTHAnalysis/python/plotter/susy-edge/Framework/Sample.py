@@ -6,7 +6,7 @@ from ROOT import TTree, TFile, TCut, TH1F, TH2F, THStack, TCanvas
 class Sample:
    'Common base class for all Samples'
 
-   def __init__(self, name, location, friendlocation, xsection, isdata):
+   def __init__(self, name, location, friendlocation, xsection, ngen, isdata):
       self.name = name
       self.location = location
       self.xSection = xsection
@@ -15,11 +15,10 @@ class Sample:
       self.ftfile = TFile(self.location+'/'+friendlocation+'/evVarFriend_'+self.name+'.root')
       self.ttree = self.tfile.Get('tree')
       self.ttree.AddFriend('sf/t',self.ftfile)
-      self.count = self.tfile.Get('Count')
+      self.count = ngen if ngen > 0. else self.tfile.Get('Count').GetEntries()
       self.lumWeight = 1.0
       if(self.isData == 0):
-        self.lumWeight = self.xSection / self.count.GetEntries()
-
+        self.lumWeight = self.xSection / self.count
    def printSample(self):
       print "#################################"
       print "Sample Name: ", self.name
@@ -44,7 +43,7 @@ class Sample:
       h.GetYaxis().SetTitle(ylabel)
       
       if(self.isData == 0):
-        cut = cut + "* ( " + str(self.lumWeight*lumi) + " )" 
+        cut = cut + "* ( " + str(self.lumWeight*lumi) + " * genWeight/abs(genWeight) )" 
       
       self.ttree.Project(name, var, cut, options) 
       return h
@@ -158,9 +157,10 @@ class Tree:
         location    = splitedLine[4]
         flocation   = splitedLine[5]
         xsection    = float(splitedLine[6])
-        isdata      = int(splitedLine[7])
+        ngen        = float(splitedLine[7])
+        isdata      = int(splitedLine[8])
 
-        sample = Sample(name, location, flocation, xsection, isdata)
+        sample = Sample(name, location, flocation, xsection, ngen, isdata)
         coincidentBlock = [l for l in self.blocks if l.name == block]
 
         if(coincidentBlock == []):
