@@ -56,7 +56,7 @@ class Sample:
      h.GetYaxis().SetTitle(ylabel)
      
      if(self.isData == 0):
-        cut = cut + "* ( " + str(self.lumWeight*lumi) + " )" 
+        cut = cut + "* ( " + str(self.lumWeight*lumi) + " * genWeight/abs(genWeight) )" 
      
      self.ttree.Project(name, var, cut, options) 
      return h
