@@ -1,6 +1,6 @@
 from CMGTools.TTHAnalysis.treeReAnalyzer import *
 
-class edgeCleaner:
+class edgeFriends:
     def __init__(self,label,tightLeptonSel,cleanJet,isMC=True):
         self.label = "" if (label in ["",None]) else ("_"+label)
         self.tightLeptonSel = tightLeptonSel
@@ -214,7 +214,7 @@ if __name__ == '__main__':
     class Tester(Module):
         def __init__(self, name):
             Module.__init__(self,name,None)
-            self.sf1 = edgeCleaner("Edge", 
+            self.sf1 = edgeFriends("Edge", 
                 lambda lep : _susyEdge(lep),
                 cleanJet = lambda lep,jet,dr : (jet.pt < 35 and dr < 0.4 and abs(jet.eta) > 2.4))
         def analyze(self,ev):
